@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow } from "electron";
+import { app, shell, BrowserWindow, dialog, ipcMain } from "electron";
 import { join } from "node:path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 
@@ -39,6 +39,14 @@ void app.whenReady().then(() => {
 
 	app.on("browser-window-created", (_, window) => {
 		optimizer.watchWindowShortcuts(window);
+	});
+
+	ipcMain.handle("dialog:openFile", async (_, filters?: Electron.FileFilter[]) => {
+		const { canceled, filePaths } = await dialog.showOpenDialog({
+			properties: ["openFile"],
+			filters
+		});
+		return canceled ? null : filePaths[0];
 	});
 
 	createWindow();
