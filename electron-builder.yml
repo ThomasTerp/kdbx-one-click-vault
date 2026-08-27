@@ -1,0 +1,18 @@
+appId: com.thomasterp.kdbx-one-click-vault
+productName: KDBX One-Click Vault
+directories:
+  buildResources: build
+  output: dist
+files:
+  - out/**/*
+  - package.json
+asarUnpack:
+  - resources/**
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
