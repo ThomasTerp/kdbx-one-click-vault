@@ -10,14 +10,13 @@ import {
 	CardHeader,
 	CardTitle
 } from "@/components/ui/card";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import {
 	InputGroup,
 	InputGroupAddon,
 	InputGroupButton,
-	InputGroupInput,
-	InputGroupText
+	InputGroupInput
 } from "@/components/ui/input-group";
-import { Label } from "@/components/ui/label";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function UnlockVaultView() {
@@ -46,82 +45,82 @@ export default function UnlockVaultView() {
 						</Tooltip>
 					</CardAction>
 				</CardHeader>
-				<CardContent className="flex flex-col gap-4">
-					<div className="flex flex-col gap-1.5">
-						<Label htmlFor="vault-file">Vault file</Label>
-						<InputGroup>
-							<InputGroupInput id="vault-file" type="text" />
-							<InputGroupAddon align="inline-end">
-								<InputGroupText>.kdbx</InputGroupText>
-								<Tooltip>
-									<TooltipTrigger
-										render={
-											<InputGroupButton
-												aria-label="Choose file"
-												size="icon-xs"
-											>
-												<FolderOpen />
-											</InputGroupButton>
-										}
-									/>
-									<TooltipContent>Choose file</TooltipContent>
-								</Tooltip>
-							</InputGroupAddon>
-						</InputGroup>
-					</div>
-					<div className="flex flex-col gap-1.5">
-						<Label htmlFor="vault-password">Master password</Label>
-						<InputGroup>
-							<InputGroupInput
-								id="vault-password"
-								type={showPassword ? "text" : "password"}
-							/>
-							<InputGroupAddon align="inline-end">
-								<Tooltip>
-									<TooltipTrigger
-										render={
-											<InputGroupButton
-												aria-label={
-													showPassword ? "Hide password" : "Show password"
-												}
-												size="icon-xs"
-												onClick={() => setShowPassword((prev) => !prev)}
-											>
-												{showPassword ? <Eye /> : <EyeOff />}
-											</InputGroupButton>
-										}
-									/>
-									<TooltipContent>
-										{showPassword ? "Hide password" : "Show password"}
-									</TooltipContent>
-								</Tooltip>
-							</InputGroupAddon>
-						</InputGroup>
-					</div>
-					<div className="flex flex-col gap-1.5">
-						<Label htmlFor="vault-keyfile">Key file</Label>
-						<InputGroup>
-							<InputGroupInput id="vault-keyfile" type="text" />
-							<InputGroupAddon align="inline-end">
-								<Tooltip>
-									<TooltipTrigger
-										render={
-											<InputGroupButton
-												aria-label="Choose key file"
-												size="icon-xs"
-											>
-												<FolderOpen />
-											</InputGroupButton>
-										}
-									/>
-									<TooltipContent>Choose file</TooltipContent>
-								</Tooltip>
-							</InputGroupAddon>
-						</InputGroup>
-					</div>
+				<CardContent>
+					<FieldGroup className="gap-3">
+						<Field>
+							<FieldLabel>Vault file</FieldLabel>
+							<InputGroup>
+								<InputGroupInput type="text" />
+								<InputGroupAddon align="inline-end">
+									<Tooltip>
+										<TooltipTrigger
+											render={
+												<InputGroupButton
+													aria-label="Choose file"
+													size="icon-xs"
+												>
+													<FolderOpen />
+												</InputGroupButton>
+											}
+										/>
+										<TooltipContent>Choose file</TooltipContent>
+									</Tooltip>
+								</InputGroupAddon>
+							</InputGroup>
+						</Field>
+						<Field>
+							<FieldLabel>Master password</FieldLabel>
+							<InputGroup>
+								<InputGroupInput type={showPassword ? "text" : "password"} />
+								<InputGroupAddon align="inline-end">
+									<Tooltip>
+										<TooltipTrigger
+											render={
+												<InputGroupButton
+													aria-label={
+														showPassword
+															? "Hide password"
+															: "Show password"
+													}
+													size="icon-xs"
+													onClick={() => setShowPassword((prev) => !prev)}
+												>
+													{showPassword ? <Eye /> : <EyeOff />}
+												</InputGroupButton>
+											}
+										/>
+										<TooltipContent>
+											{showPassword ? "Hide password" : "Show password"}
+										</TooltipContent>
+									</Tooltip>
+								</InputGroupAddon>
+							</InputGroup>
+						</Field>
+						<Field>
+							<FieldLabel>Key file</FieldLabel>
+							<InputGroup>
+								<InputGroupInput type="text" />
+								<InputGroupAddon align="inline-end">
+									<Tooltip>
+										<TooltipTrigger
+											render={
+												<InputGroupButton
+													aria-label="Choose key file"
+													size="icon-xs"
+												>
+													<FolderOpen />
+												</InputGroupButton>
+											}
+										/>
+										<TooltipContent>Choose file</TooltipContent>
+									</Tooltip>
+								</InputGroupAddon>
+							</InputGroup>
+						</Field>
+					</FieldGroup>
 				</CardContent>
 				<CardFooter>
-					<Button className="w-full" type="submit">
+					<Button className="w-full">
 						<Unlock />
 						Unlock
 					</Button>
