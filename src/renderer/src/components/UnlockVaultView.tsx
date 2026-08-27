@@ -27,11 +27,13 @@ export default function UnlockVaultView() {
 	const [keyFile, setKeyFile] = useState("");
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	const [shake, setShake] = useState(false);
-	const isVaultFileInvalid = isSubmitted && vaultFile === "";
-	const isCredentialsInvalid = isSubmitted && masterPassword === "" && keyFile === "";
+	const isVaultFileEmpty = vaultFile === "";
+	const isCredentialsEmpty = masterPassword === "" && keyFile === "";
+	const isVaultFileInvalid = isSubmitted && isVaultFileEmpty;
+	const isCredentialsInvalid = isSubmitted && isCredentialsEmpty;
 	const onUnlockClick = () => {
 		setIsSubmitted(true);
-		if (vaultFile === "" || (masterPassword === "" && keyFile === "")) {
+		if (isVaultFileEmpty || isCredentialsEmpty) {
 			setShake(false);
 			requestAnimationFrame(() => setShake(true));
 		}
