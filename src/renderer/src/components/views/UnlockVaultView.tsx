@@ -19,39 +19,24 @@ export default function UnlockVaultView({ unlockVault }: UnlockVaultViewProps) {
 	const [keyFilePath, setKeyFilePath] = useState("");
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	const [isLoadingVault, setIsLoadingVault] = useState(false);
-	const [isChoosingFile, setIsChoosingFile] = useState(false);
 	const [shake, setShake] = useState(false);
 	const isVaultFileEmpty = vaultFilePath === "";
 	const isCredentialsEmpty = masterPassword === "" && keyFilePath === "";
 	const isVaultFileInvalid = isSubmitted && isVaultFileEmpty;
 	const isCredentialsInvalid = isSubmitted && isCredentialsEmpty;
 	const onChooseVaultFileClick = async () => {
-		if (!isChoosingFile) {
-			setIsChoosingFile(true);
-			try {
-				const filePath = await window.api.selectFile([{ name: "KeePass vault", extensions: ["kdbx"] }]);
-				if (filePath != null) {
-					setVaultFilePath(filePath);
-				}
-			} finally {
-				setIsChoosingFile(false);
-			}
+		const filePath = await window.api.selectFile([{ name: "KeePass vault", extensions: ["kdbx"] }]);
+		if (filePath != null) {
+			setVaultFilePath(filePath);
 		}
 	};
 	const onChooseKeyFileClick = async () => {
-		if (!isChoosingFile) {
-			setIsChoosingFile(true);
-			try {
-				const filePath = await window.api.selectFile([
-					{ name: "Key files", extensions: ["keyx", "key"] },
-					{ name: "All files", extensions: ["*"] }
-				]);
-				if (filePath != null) {
-					setKeyFilePath(filePath);
-				}
-			} finally {
-				setIsChoosingFile(false);
-			}
+		const filePath = await window.api.selectFile([
+			{ name: "Key files", extensions: ["keyx", "key"] },
+			{ name: "All files", extensions: ["*"] }
+		]);
+		if (filePath != null) {
+			setKeyFilePath(filePath);
 		}
 	};
 	const onNewVaultClick = () => {
