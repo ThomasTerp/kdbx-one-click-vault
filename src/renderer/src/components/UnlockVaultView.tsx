@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Eye, EyeOff, FolderOpen, Unlock, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,7 +10,7 @@ import {
 	CardHeader,
 	CardTitle
 } from "@/components/ui/card";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import {
 	InputGroup,
 	InputGroupAddon,
@@ -18,12 +18,30 @@ import {
 	InputGroupInput
 } from "@/components/ui/input-group";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 export default function UnlockVaultView() {
-	const [showPassword, setShowPassword] = useState(false);
+	const [vaultFile, setVaultFile] = useState("");
+	const [masterPassword, setMasterPassword] = useState("");
+	const [showMasterPassword, setShowMasterPassword] = useState(false);
+	const [keyFile, setKeyFile] = useState("");
+	const [isSubmitted, setIsSubmitted] = useState(false);
+	const [shake, setShake] = useState(false);
+	const isVaultFileInvalid = isSubmitted && vaultFile === "";
+	const isCredentialsInvalid = isSubmitted && masterPassword === "" && keyFile === "";
+	const onUnlockClick = () => {
+		setIsSubmitted(true);
+		if (vaultFile === "" || (masterPassword === "" && keyFile === "")) {
+			setShake(false);
+			requestAnimationFrame(() => setShake(true));
+		}
+	};
 	return (
 		<div className="relative flex min-h-screen items-center justify-center p-4">
-			<Card className="w-full max-w-sm">
+			<Card
+				className={cn("w-full max-w-sm", shake && "animate-shake")}
+				onAnimationEnd={() => setShake(false)}
+			>
 				<CardHeader>
 					<CardTitle>Unlock Vault</CardTitle>
 					<CardDescription>Choose a vault to unlock.</CardDescription>
@@ -47,10 +65,15 @@ export default function UnlockVaultView() {
 				</CardHeader>
 				<CardContent>
 					<FieldGroup className="gap-3">
-						<Field>
+						<Field data-invalid={isVaultFileInvalid}>
 							<FieldLabel>Vault file</FieldLabel>
 							<InputGroup>
-								<InputGroupInput type="text" />
+								<InputGroupInput
+									type="text"
+									aria-invalid={isVaultFileInvalid}
+									value={vaultFile}
+									onChange={(e) => setVaultFile(e.target.value)}
+								/>
 								<InputGroupAddon align="inline-end">
 									<Tooltip>
 										<TooltipTrigger
@@ -67,39 +90,61 @@ export default function UnlockVaultView() {
 									</Tooltip>
 								</InputGroupAddon>
 							</InputGroup>
+							{isVaultFileInvalid && (
+								<FieldError errors={[{ message: "Vault file is required." }]} />
+							)}
 						</Field>
-						<Field>
+						<Field data-invalid={isCredentialsInvalid}>
 							<FieldLabel>Master password</FieldLabel>
 							<InputGroup>
-								<InputGroupInput type={showPassword ? "text" : "password"} />
+								<InputGroupInput
+									type={showMasterPassword ? "text" : "password"}
+									aria-invalid={isCredentialsInvalid}
+									value={masterPassword}
+									onChange={(e) => setMasterPassword(e.target.value)}
+								/>
 								<InputGroupAddon align="inline-end">
 									<Tooltip>
 										<TooltipTrigger
 											render={
 												<InputGroupButton
 													aria-label={
-														showPassword
+														showMasterPassword
 															? "Hide password"
 															: "Show password"
 													}
 													size="icon-xs"
-													onClick={() => setShowPassword((prev) => !prev)}
+													onClick={() =>
+														setShowMasterPassword((prev) => !prev)
+													}
 												>
-													{showPassword ? <Eye /> : <EyeOff />}
+													{showMasterPassword ? <Eye /> : <EyeOff />}
 												</InputGroupButton>
 											}
 										/>
 										<TooltipContent>
-											{showPassword ? "Hide password" : "Show password"}
+											{showMasterPassword ? "Hide password" : "Show password"}
 										</TooltipContent>
 									</Tooltip>
 								</InputGroupAddon>
 							</InputGroup>
+							{isCredentialsInvalid && (
+								<FieldError
+									errors={[
+										{ message: "Master password and/or key file is required." }
+									]}
+								/>
+							)}
 						</Field>
-						<Field>
+						<Field data-invalid={isCredentialsInvalid}>
 							<FieldLabel>Key file</FieldLabel>
 							<InputGroup>
-								<InputGroupInput type="text" />
+								<InputGroupInput
+									type="text"
+									aria-invalid={isCredentialsInvalid}
+									value={keyFile}
+									onChange={(e) => setKeyFile(e.target.value)}
+								/>
 								<InputGroupAddon align="inline-end">
 									<Tooltip>
 										<TooltipTrigger
@@ -120,7 +165,7 @@ export default function UnlockVaultView() {
 					</FieldGroup>
 				</CardContent>
 				<CardFooter>
-					<Button className="w-full">
+					<Button className="w-full" onClick={() => onUnlockClick()}>
 						<Unlock />
 						Unlock
 					</Button>
