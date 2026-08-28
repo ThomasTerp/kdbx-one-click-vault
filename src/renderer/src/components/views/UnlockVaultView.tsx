@@ -6,6 +6,7 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useShake } from "@/hooks/useShake";
 import { cn } from "@/lib/utils";
 
 interface UnlockVaultViewProps {
@@ -19,21 +20,24 @@ export default function UnlockVaultView({ unlockVault }: UnlockVaultViewProps) {
 	const [keyFilePath, setKeyFilePath] = useState("");
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	const [isLoadingVault, setIsLoadingVault] = useState(false);
-	const [shake, setShake] = useState(false);
+	const [shake, stopShaking, shakeClassName] = useShake();
 	const isVaultFileEmpty = vaultFilePath === "";
 	const isCredentialsEmpty = masterPassword === "" && keyFilePath === "";
 	const isVaultFileInvalid = isSubmitted && isVaultFileEmpty;
 	const isCredentialsInvalid = isSubmitted && isCredentialsEmpty;
 	const onChooseVaultFileClick = async () => {
-		const filePath = await window.api.selectFile([{ name: "KeePass vault", extensions: ["kdbx"] }]);
+		const filePath = await window.api.selectFile("Select Vault File", [
+			{ name: "KeePass KDBX Files", extensions: ["kdbx"] },
+			{ name: "All Files", extensions: ["*"] }
+		]);
 		if (filePath != null) {
 			setVaultFilePath(filePath);
 		}
 	};
 	const onChooseKeyFileClick = async () => {
-		const filePath = await window.api.selectFile([
-			{ name: "Key files", extensions: ["keyx", "key"] },
-			{ name: "All files", extensions: ["*"] }
+		const filePath = await window.api.selectFile("Select Key File", [
+			{ name: "Key Files", extensions: ["keyx", "key"] },
+			{ name: "All Files", extensions: ["*"] }
 		]);
 		if (filePath != null) {
 			setKeyFilePath(filePath);
@@ -45,16 +49,16 @@ export default function UnlockVaultView({ unlockVault }: UnlockVaultViewProps) {
 	const onUnlockClick = () => {
 		setIsSubmitted(true);
 		if (isVaultFileEmpty || isCredentialsEmpty) {
-			setShake(false);
-			requestAnimationFrame(() => setShake(true));
+			shake();
 		} else {
+			stopShaking();
 			setShowMasterPassword(false);
 			setIsLoadingVault(true);
 		}
 	};
 	return (
 		<div className="flex min-h-screen items-center justify-center p-4">
-			<Card className={cn("w-full min-w-3xs max-w-sm", shake && "animate-shake")} onAnimationEnd={() => setShake(false)}>
+			<Card className={cn("w-full min-w-3xs max-w-sm", shakeClassName)} onAnimationEnd={stopShaking}>
 				<fieldset disabled={isLoadingVault} className="contents">
 					<CardHeader>
 						<CardTitle>Unlock Vault</CardTitle>

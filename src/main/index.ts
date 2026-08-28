@@ -41,11 +41,11 @@ void app.whenReady().then(() => {
 		optimizer.watchWindowShortcuts(window);
 	});
 
-	ipcMain.handle("dialog:openFile", async (event, filters?: Electron.FileFilter[]) => {
+	ipcMain.handle("dialog:openFile", async (event, title?: string, filters?: Electron.FileFilter[]) => {
 		const parent = BrowserWindow.fromWebContents(event.sender);
 		const { canceled, filePaths } = await (parent != null
-			? dialog.showOpenDialog(parent, { properties: ["openFile"], filters })
-			: dialog.showOpenDialog({ properties: ["openFile"], filters }));
+			? dialog.showOpenDialog(parent, { properties: ["openFile"], title, filters })
+			: dialog.showOpenDialog({ properties: ["openFile"], title, filters }));
 		return canceled ? null : filePaths[0];
 	});
 

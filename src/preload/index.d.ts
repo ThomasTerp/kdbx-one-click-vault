@@ -1,7 +1,7 @@
 import { ElectronAPI } from "@electron-toolkit/preload";
 
 interface Api {
-	selectFile: (filters?: Electron.FileFilter[]) => Promise<string | null>;
+	selectFile: (title?: string, filters?: Electron.FileFilter[]) => Promise<string | null>;
 }
 
 declare global {
