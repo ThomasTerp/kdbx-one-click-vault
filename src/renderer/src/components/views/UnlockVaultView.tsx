@@ -54,6 +54,7 @@ export default function UnlockVaultView({ unlockVault }: UnlockVaultViewProps) {
 			stopShaking();
 			setShowMasterPassword(false);
 			setIsLoadingVault(true);
+			setTimeout(unlockVault, 3000);
 		}
 	};
 	return (
