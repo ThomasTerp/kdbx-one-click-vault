@@ -67,12 +67,12 @@ export default function UnlockVaultView({ unlockVault }: UnlockVaultViewProps) {
 							<Tooltip>
 								<TooltipTrigger
 									render={
-										<Button variant="outline" size="icon" type="button" aria-label="New vault" onClick={onNewVaultClick}>
+										<Button variant="outline" size="icon" type="button" aria-label="New Vault" onClick={onNewVaultClick}>
 											<Plus />
 										</Button>
 									}
 								/>
-								<TooltipContent>New vault</TooltipContent>
+								<TooltipContent>New Vault</TooltipContent>
 							</Tooltip>
 						</CardAction>
 					</CardHeader>
@@ -91,12 +91,16 @@ export default function UnlockVaultView({ unlockVault }: UnlockVaultViewProps) {
 										<Tooltip>
 											<TooltipTrigger
 												render={
-													<InputGroupButton aria-label="Choose file" size="icon-xs" onClick={() => void onChooseVaultFileClick()}>
+													<InputGroupButton
+														aria-label="Choose vault file"
+														size="icon-xs"
+														onClick={() => void onChooseVaultFileClick()}
+													>
 														<FolderOpen />
 													</InputGroupButton>
 												}
 											/>
-											<TooltipContent>Choose file</TooltipContent>
+											<TooltipContent>Choose File</TooltipContent>
 										</Tooltip>
 									</InputGroupAddon>
 								</InputGroup>
@@ -116,7 +120,7 @@ export default function UnlockVaultView({ unlockVault }: UnlockVaultViewProps) {
 											<TooltipTrigger
 												render={
 													<InputGroupButton
-														aria-label={showMasterPassword ? "Hide password" : "Show password"}
+														aria-label={showMasterPassword ? "Hide Master Password" : "Show Master Password"}
 														size="icon-xs"
 														onClick={() => setShowMasterPassword((prev) => !prev)}
 													>
@@ -124,7 +128,7 @@ export default function UnlockVaultView({ unlockVault }: UnlockVaultViewProps) {
 													</InputGroupButton>
 												}
 											/>
-											<TooltipContent>{showMasterPassword ? "Hide password" : "Show password"}</TooltipContent>
+											<TooltipContent>{showMasterPassword ? "Hide Password" : "Show Password"}</TooltipContent>
 										</Tooltip>
 									</InputGroupAddon>
 								</InputGroup>
@@ -151,12 +155,12 @@ export default function UnlockVaultView({ unlockVault }: UnlockVaultViewProps) {
 										<Tooltip>
 											<TooltipTrigger
 												render={
-													<InputGroupButton aria-label="Choose key file" size="icon-xs" onClick={() => void onChooseKeyFileClick()}>
+													<InputGroupButton aria-label="Choose Key File" size="icon-xs" onClick={() => void onChooseKeyFileClick()}>
 														<FolderOpen />
 													</InputGroupButton>
 												}
 											/>
-											<TooltipContent>Choose file</TooltipContent>
+											<TooltipContent>Choose File</TooltipContent>
 										</Tooltip>
 									</InputGroupAddon>
 								</InputGroup>
