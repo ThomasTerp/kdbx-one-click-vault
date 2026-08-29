@@ -8,12 +8,10 @@ import { Spinner } from "@/components/ui/spinner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useShake } from "@/hooks/useShake";
 import { cn } from "@/lib/utils";
+import useViewManager from "@renderer/hooks/useViewManager";
 
-interface UnlockVaultViewProps {
-	unlockVault: () => void;
-}
-
-export default function UnlockVaultView({ unlockVault }: UnlockVaultViewProps) {
+export default function UnlockVaultView() {
+	const viewManager = useViewManager();
 	const [vaultFilePath, setVaultFilePath] = useState("");
 	const [masterPassword, setMasterPassword] = useState("");
 	const [showMasterPassword, setShowMasterPassword] = useState(false);
@@ -44,7 +42,7 @@ export default function UnlockVaultView({ unlockVault }: UnlockVaultViewProps) {
 		}
 	};
 	const onNewVaultClick = () => {
-		unlockVault();
+		viewManager.setView("vault");
 	};
 	const onUnlockClick = () => {
 		setIsSubmitted(true);
@@ -54,7 +52,7 @@ export default function UnlockVaultView({ unlockVault }: UnlockVaultViewProps) {
 			stopShaking();
 			setShowMasterPassword(false);
 			setIsLoadingVault(true);
-			setTimeout(unlockVault, 3000);
+			setTimeout(() => viewManager.setView("vault"), 3000);
 		}
 	};
 	return (
