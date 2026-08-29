@@ -1,9 +1,13 @@
+import * as React from "react";
 import VaultHeader from "@renderer/components/VaultHeader";
+import { cn } from "@/lib/utils";
+import VaultContent from "../VaultContent";
 
-export default function VaultView() {
+export default function VaultView({ className, ...props }: React.ComponentProps<"div">) {
 	return (
-		<div className="flex min-h-screen flex-col">
+		<div className={cn("flex flex-col", className)} {...props}>
 			<VaultHeader />
+			<VaultContent className="flex-1" />
 		</div>
 	);
 }

@@ -1,9 +1,10 @@
+import * as React from "react";
 import { Search } from "lucide-react";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 
-export default function VaultSearch() {
+export default function VaultSearch({ ...props }: React.ComponentProps<"div">) {
 	return (
-		<InputGroup className="max-w-xl mx-auto">
+		<InputGroup {...props}>
 			<InputGroupInput placeholder="Search…" />
 			<InputGroupAddon align="inline-start">
 				<Search className="text-muted-foreground" />

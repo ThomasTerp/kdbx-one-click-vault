@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useState } from "react";
 import { Eye, EyeOff, FolderOpen, Unlock, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,7 @@ import { useShake } from "@/hooks/useShake";
 import { cn } from "@/lib/utils";
 import useViewManager from "@renderer/hooks/useViewManager";
 
-export default function UnlockVaultView() {
+export default function UnlockVaultView({ className, ...props }: React.ComponentProps<"div">) {
 	const viewManager = useViewManager();
 	const [vaultFilePath, setVaultFilePath] = useState("");
 	const [masterPassword, setMasterPassword] = useState("");
@@ -56,7 +57,7 @@ export default function UnlockVaultView() {
 		}
 	};
 	return (
-		<div className="flex min-h-screen items-center justify-center p-4">
+		<div className={cn("flex items-center justify-center p-4", className)} {...props}>
 			<Card className={cn("w-full min-w-3xs max-w-sm", shakeClassName)} onAnimationEnd={stopShaking}>
 				<fieldset disabled={isLoadingVault} className="contents">
 					<CardHeader>

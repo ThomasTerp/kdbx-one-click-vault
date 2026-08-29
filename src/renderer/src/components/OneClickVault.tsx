@@ -8,21 +8,22 @@ import useObservableState from "@renderer/hooks/useObservableState";
 export default function OneClickVault() {
 	const viewManager = useViewManager();
 	const view = useObservableState(viewManager.change$, () => viewManager.view);
-	let viewNode: React.JSX.Element | null;
+	const viewClassName = "min-h-screen select-none";
+	let viewElement: React.ReactElement | null;
 	switch (view) {
 		case "unlock-vault":
-			viewNode = <UnlockVaultView />;
+			viewElement = <UnlockVaultView className={viewClassName} />;
 			break;
 		case "vault":
-			viewNode = <VaultView />;
+			viewElement = <VaultView className={viewClassName} />;
 			break;
 		default:
-			viewNode = null;
+			viewElement = null;
 			break;
 	}
 	return (
 		<TooltipProvider>
-			<div className="select-none">{viewNode}</div>
+			{viewElement}
 			<Toaster />
 		</TooltipProvider>
 	);
