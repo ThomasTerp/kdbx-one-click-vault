@@ -5,7 +5,7 @@ import OneClickVault from "@renderer/components/OneClickVault";
 import IViewManager from "./IViewManager";
 import ViewManagerContext from "@renderer/contexts/ViewManagerContext";
 
-export default class OneClickApp implements IApp {
+export default class OneClickVaultApp implements IApp {
 	private _viewManager: IViewManager;
 
 	constructor(viewManager: IViewManager) {

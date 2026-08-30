@@ -1,5 +1,5 @@
 import "./assets/main.css";
-import OneClickApp from "./dependencies/managers/OneClickVaultApp";
+import OneClickVaultApp from "./dependencies/managers/OneClickVaultApp";
 import ViewManager from "./dependencies/managers/ViewManager";
 
 // Pure dependency injection.
@@ -9,7 +9,7 @@ import ViewManager from "./dependencies/managers/ViewManager";
 	// #endregion
 
 	// #region App
-	const oneClickVaultApp = new OneClickApp(viewManager);
+	const oneClickVaultApp = new OneClickVaultApp(viewManager);
 	oneClickVaultApp.initialize();
 	// #endregion
 })();
