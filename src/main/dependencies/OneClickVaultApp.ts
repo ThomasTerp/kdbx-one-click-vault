@@ -2,14 +2,22 @@ import { app, shell, BrowserWindow, dialog, ipcMain } from "electron";
 import { join } from "node:path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import IApp from "./IApp";
+import IThemeManager, { Theme } from "./managers/IThemeManager";
 
+const APP_USER_MODEL_ID = "com.kdbx-one-click-vault.app";
 const WINDOW_WIDTH = 900;
 const WINDOW_HEIGHT = 670;
 
 export default class OneClickVaultApp implements IApp {
+	private _themeManager: IThemeManager;
+
+	constructor(themeManager: IThemeManager) {
+		this._themeManager = themeManager;
+	}
+
 	initialize(): void {
 		void app.whenReady().then(() => {
-			electronApp.setAppUserModelId("com.kdbx-one-click-vault.app");
+			electronApp.setAppUserModelId(APP_USER_MODEL_ID);
 			app.on("browser-window-created", (_, window) => {
 				optimizer.watchWindowShortcuts(window);
 			});
@@ -29,12 +37,16 @@ export default class OneClickVaultApp implements IApp {
 	}
 
 	private initializeIPC(): void {
-		ipcMain.handle("dialog:openFile", async (event, title?: string, filters?: Electron.FileFilter[]) => {
+		ipcMain.handle("dialog:selectFile", async (event, title?: string, filters?: Electron.FileFilter[]) => {
 			const parent = BrowserWindow.fromWebContents(event.sender);
 			const { canceled, filePaths } = await (parent != null
 				? dialog.showOpenDialog(parent, { properties: ["openFile"], title, filters })
 				: dialog.showOpenDialog({ properties: ["openFile"], title, filters }));
 			return (!canceled && filePaths.at(0)) ?? null;
+		});
+		ipcMain.handle("theme:get", (): Theme => this._themeManager.getTheme());
+		ipcMain.handle("theme:set", (_event, theme: Theme): void => {
+			this._themeManager.setTheme(theme);
 		});
 	}
 
