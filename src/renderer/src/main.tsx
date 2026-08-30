@@ -10,6 +10,7 @@ void (async () => {
 	// #region Managers
 	const viewManager = new ViewManager(DEFAULT_VIEW);
 	const themeManager = new ThemeManager();
+	await themeManager.initialize();
 	// #endregion
 
 	// #region App

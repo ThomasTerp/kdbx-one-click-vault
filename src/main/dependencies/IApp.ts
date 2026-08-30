@@ -1,3 +1,3 @@
 export default interface IApp {
-	initialize(): void;
+	initialize(): Promise<void>;
 }

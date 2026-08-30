@@ -15,7 +15,7 @@ export default class OneClickVaultApp implements IApp {
 		this._themeManager = themeManager;
 	}
 
-	initialize(): void {
+	async initialize(): Promise<void> {
 		void app.whenReady().then(() => {
 			electronApp.setAppUserModelId(APP_USER_MODEL_ID);
 			app.on("browser-window-created", (_, window) => {

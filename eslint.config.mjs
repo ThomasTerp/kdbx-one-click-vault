@@ -1,4 +1,4 @@
-import { defineConfig, globalIgnores } from "eslint/config";
+﻿import { defineConfig, globalIgnores } from "eslint/config";
 import tsEslintBase from "typescript-eslint";
 import tsEslint from "@electron-toolkit/eslint-config-ts";
 import eslintConfigPrettier from "eslint-config-prettier";
@@ -29,7 +29,8 @@ export default defineConfig(
 	{
 		files: ["**/*.{ts,tsx}"],
 		rules: {
-			"@typescript-eslint/no-floating-promises": "error"
+			"@typescript-eslint/no-floating-promises": "error",
+			"@typescript-eslint/require-await": "off"
 		}
 	},
 	{

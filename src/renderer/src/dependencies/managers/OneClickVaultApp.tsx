@@ -17,7 +17,6 @@ export default class OneClickVaultApp implements IApp {
 	}
 
 	async initialize(): Promise<void> {
-		await this._themeManager.initialize();
 		ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 			<React.StrictMode>
 				<ViewManagerContext.Provider value={this._viewManager}>
