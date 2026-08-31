@@ -9,11 +9,11 @@ import { Spinner } from "@/components/ui/spinner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useShake } from "@/hooks/useShake";
 import { cn } from "@/lib/utils";
-import useViewManager from "@renderer/hooks/useViewManager";
-import { toast } from "../ui/toast";
+import useVaultManager from "@renderer/hooks/useVaultManager";
+import { toast } from "./ui/toast";
 
-export default function UnlockVaultView({ className, ...props }: React.ComponentProps<"div">) {
-	const viewManager = useViewManager();
+export default function UnlockVault({ className, ...props }: React.ComponentProps<"div">) {
+	const vaultManager = useVaultManager();
 	const [vaultFilePath, setVaultFilePath] = useState("");
 	const [masterPassword, setMasterPassword] = useState("");
 	const [showMasterPassword, setShowMasterPassword] = useState(false);
@@ -45,8 +45,7 @@ export default function UnlockVaultView({ className, ...props }: React.Component
 	};
 	const onNewVaultClick = async () => {
 		try {
-			await window.api.newVault();
-			viewManager.setView("vault");
+			await vaultManager.newVault();
 		} catch {
 			toast.add({ type: "error", description: "Failed to create new vault." });
 		}
@@ -59,7 +58,6 @@ export default function UnlockVaultView({ className, ...props }: React.Component
 			stopShaking();
 			setShowMasterPassword(false);
 			setIsLoadingVault(true);
-			setTimeout(() => viewManager.setView("vault"), 3000);
 		}
 	};
 	return (

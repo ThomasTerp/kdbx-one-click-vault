@@ -1,19 +1,17 @@
 import "./assets/main.css";
 import OneClickVaultApp from "./dependencies/OneClickVaultApp";
-import ViewManager from "./dependencies/managers/ViewManager";
 import ThemeManager from "./dependencies/managers/ThemeManager";
-
-const DEFAULT_VIEW = "unlock-vault";
+import VaultManager from "./dependencies/managers/VaultManager";
 
 // #region Pure dependency injection
 void (async () => {
 	// #region Managers
-	const viewManager = new ViewManager(DEFAULT_VIEW);
 	const themeManager = new ThemeManager();
+	const vaultManager = new VaultManager();
 	// #endregion
 
 	// #region App
-	const oneClickVaultApp = new OneClickVaultApp(viewManager, themeManager);
+	const oneClickVaultApp = new OneClickVaultApp(themeManager, vaultManager);
 	await oneClickVaultApp.initialize();
 	// #endregion
 })();

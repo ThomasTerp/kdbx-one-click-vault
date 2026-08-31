@@ -31,6 +31,10 @@ export default class ThemeManager implements IThemeManager {
 	async initialize(): Promise<void> {
 		this._theme = await window.api.getTheme();
 		this.applyTheme();
+		window.api.onThemeChanged((theme) => {
+			this._theme = theme;
+			this.applyTheme();
+		});
 	}
 
 	async setTheme(theme: Theme): Promise<void> {

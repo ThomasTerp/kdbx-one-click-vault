@@ -1,21 +1,27 @@
-import Store from "electron-store";
-import IThemeManager, { Theme } from "./IThemeManager";
-
-const THEME_STORE_KEY = "theme";
-const DEFAULT_THEME: Theme = "system";
+import { Observable, Subject } from "rxjs";
+import IThemeManager from "./IThemeManager";
+import { Theme } from "../../../models/Theme";
+import IReadWriteRepository from "../repositories/IReadWriteRepository";
 
 export default class ThemeManager implements IThemeManager {
-	private _store: Store;
+	private _change$: Subject<Theme>;
+	private _themeRepository: IReadWriteRepository<Theme>;
 
-	constructor(store: Store) {
-		this._store = store;
+	constructor(themeRepository: IReadWriteRepository<Theme>) {
+		this._change$ = new Subject();
+		this._themeRepository = themeRepository;
 	}
 
-	getTheme(): Theme {
-		return this._store.get(THEME_STORE_KEY, DEFAULT_THEME) as Theme;
+	get change$(): Observable<Theme> {
+		return this._change$.asObservable();
 	}
 
-	setTheme(theme: Theme): void {
-		this._store.set(THEME_STORE_KEY, theme);
+	async getTheme(): Promise<Theme> {
+		return await this._themeRepository.read();
+	}
+
+	async setTheme(theme: Theme): Promise<void> {
+		await this._themeRepository.write(theme);
+		this._change$.next(theme);
 	}
 }

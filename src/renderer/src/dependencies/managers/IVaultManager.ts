@@ -1,15 +1,18 @@
 import { Observable } from "rxjs";
-import { VaultData } from "../../../models/VaultData";
 
 export default interface IVaultManager {
 	readonly change$: Observable<void>;
-	vaultFilePath: string | null;
 	readonly vaultData: VaultData | null;
 	readonly isDirty: boolean;
+	readonly vaultFilePath: string | null;
 
+	initialize(): Promise<void>;
 	newVault(): Promise<void>;
-
 	saveVault(): Promise<void>;
+	saveVaultAs(): Promise<void>;
+	closeVault(force?: boolean): Promise<boolean>;
+}
 
-	closeVault(): Promise<void>;
+export interface VaultData {
+	name: string;
 }

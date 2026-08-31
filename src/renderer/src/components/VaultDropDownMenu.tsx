@@ -25,37 +25,35 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import useViewManager from "@renderer/hooks/useViewManager";
 import useThemeManager from "@renderer/hooks/useThemeManager";
+import useVaultManager from "@renderer/hooks/useVaultManager";
 import useObservableState from "@renderer/hooks/useObservableState";
 import { Theme } from "@renderer/dependencies/managers/IThemeManager";
 import { toast } from "@/components/ui/toast";
 
 export default function VaultDropDownMenu() {
-	const viewManager = useViewManager();
 	const themeManager = useThemeManager();
+	const vaultManager = useVaultManager();
 	const theme = useObservableState(themeManager.change$, () => themeManager.theme);
 	const [isLockDialogOpen, setIsLockDialogOpen] = useState(false);
 	const onSaveClick = async () => {
 		try {
-			await window.api.saveVault();
+			await vaultManager.saveVault();
 		} catch {
 			toast.add({ type: "error", description: "Failed to save vault." });
 		}
 	};
 	const onSaveAsClick = async () => {
 		try {
-			await window.api.saveVaultAs();
+			await vaultManager.saveVaultAs();
 		} catch {
 			toast.add({ type: "error", description: "Failed to save vault." });
 		}
 	};
 	const onLockClick = async () => {
 		try {
-			const canClose = await window.api.closeVault();
-			if (canClose) {
-				viewManager.setView("unlock-vault");
-			} else {
+			const canClose = await vaultManager.closeVault();
+			if (!canClose) {
 				setIsLockDialogOpen(true);
 			}
 		} catch {
@@ -64,10 +62,9 @@ export default function VaultDropDownMenu() {
 	};
 	const onSaveAndLockClick = async () => {
 		try {
-			await window.api.saveVault();
+			await vaultManager.saveVault();
 			try {
-				await window.api.closeVault(true);
-				viewManager.setView("unlock-vault");
+				await vaultManager.closeVault(true);
 			} catch {
 				toast.add({ type: "error", description: "Failed to lock vault." });
 			}
@@ -77,8 +74,7 @@ export default function VaultDropDownMenu() {
 	};
 	const onDiscardAndLockClick = async () => {
 		try {
-			await window.api.closeVault(true);
-			viewManager.setView("unlock-vault");
+			await vaultManager.closeVault(true);
 		} catch {
 			toast.add({ type: "error", description: "Failed to lock vault." });
 		}

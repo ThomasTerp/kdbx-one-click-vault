@@ -1,6 +1,9 @@
-export type Theme = "light" | "dark" | "system";
+import { Observable } from "rxjs";
+import { Theme } from "../../../models/Theme";
 
 export default interface IThemeManager {
-	getTheme(): Theme;
-	setTheme(theme: Theme): void;
+	readonly change$: Observable<Theme>;
+
+	getTheme(): Promise<Theme>;
+	setTheme(theme: Theme): Promise<void>;
 }

@@ -2,7 +2,8 @@ import { app, shell, BrowserWindow, dialog, ipcMain, IpcMainInvokeEvent } from "
 import { join } from "node:path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import IApp from "./IApp";
-import IThemeManager, { Theme } from "./managers/IThemeManager";
+import IThemeManager from "./managers/IThemeManager";
+import { Theme } from "../../models/Theme";
 import IVaultManager from "./managers/IVaultManager";
 
 const APP_USER_MODEL_ID = "com.kdbx-one-click-vault.app";
@@ -51,13 +52,29 @@ export default class OneClickVaultApp implements IApp {
 		// #endregion
 
 		// #region Theme
-		ipcMain.handle("theme:get", (): Theme => this._themeManager.getTheme());
-		ipcMain.handle("theme:set", (_event, theme: Theme): void => {
-			this._themeManager.setTheme(theme);
+		this._themeManager.change$.subscribe((theme) => {
+			for (const window of BrowserWindow.getAllWindows()) {
+				window.webContents.send("theme:changed", theme);
+			}
+		});
+		ipcMain.handle("theme:get", async (): Promise<Theme> => this._themeManager.getTheme());
+		ipcMain.handle("theme:set", async (_event, theme: Theme): Promise<void> => {
+			await this._themeManager.setTheme(theme);
 		});
 		// #endregion
 
 		// #region Vault
+		this._vaultManager.change$.subscribe(() => {
+			const vaultData = this._vaultManager.vaultData;
+			const isDirty = this._vaultManager.isDirty;
+			const vaultFilePath = this._vaultManager.vaultFilePath;
+			for (const window of BrowserWindow.getAllWindows()) {
+				window.webContents.send("vault:changed", vaultData, isDirty, vaultFilePath);
+			}
+		});
+		ipcMain.handle("vault:getVaultData", () => this._vaultManager.vaultData);
+		ipcMain.handle("vault:isDirty", () => this._vaultManager.isDirty);
+		ipcMain.handle("vault:getVaultFilePath", () => this._vaultManager.vaultFilePath);
 		ipcMain.handle("vault:new", async (): Promise<void> => {
 			await this._vaultManager.newVault();
 		});
@@ -88,8 +105,20 @@ export default class OneClickVaultApp implements IApp {
 	private async selectVaultSavePath(event: IpcMainInvokeEvent): Promise<string | null> {
 		const parent = BrowserWindow.fromWebContents(event.sender);
 		const { canceled, filePath } = await (parent != null
-			? dialog.showSaveDialog(parent, { filters: [{ name: "KDBX Vault", extensions: ["kdbx"] }] })
-			: dialog.showSaveDialog({ filters: [{ name: "KDBX Vault", extensions: ["kdbx"] }] }));
+			? dialog.showSaveDialog(parent, {
+					filters: [
+						{ name: "KeePass KDBX Files", extensions: ["kdbx"] },
+						{ name: "All Files", extensions: ["*"] }
+					],
+					title: "Save Vault File"
+				})
+			: dialog.showSaveDialog({
+					filters: [
+						{ name: "KeePass KDBX Files", extensions: ["kdbx"] },
+						{ name: "All Files", extensions: ["*"] }
+					],
+					title: "Save Vault File"
+				}));
 		return (!canceled && filePath) || null;
 	}
 
