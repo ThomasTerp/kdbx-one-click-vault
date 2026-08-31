@@ -7,8 +7,6 @@ import ThemeManagerContext from "@renderer/contexts/ThemeManagerContext";
 import IVaultManager from "./managers/IVaultManager";
 import VaultManagerContext from "@renderer/contexts/VaultManagerContext";
 
-const TITLE = "One Click Vault";
-
 export default class OneClickVaultApp implements IApp {
 	private _themeManager: IThemeManager;
 	private _vaultManager: IVaultManager;
@@ -21,13 +19,7 @@ export default class OneClickVaultApp implements IApp {
 	async initialize(): Promise<void> {
 		await this._themeManager.initialize();
 		await this._vaultManager.initialize();
-		this._vaultManager.change$.subscribe(() => this.updateTitle());
-		this.updateTitle();
 		this.render();
-	}
-
-	private updateTitle() {
-		document.title = `${this._vaultManager.vaultData != null ? `${this._vaultManager.vaultFilePath ?? ""}${this._vaultManager.isDirty ? "*" : ""} - ` : ""}${TITLE}`;
 	}
 
 	private render() {
