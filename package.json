@@ -33,6 +33,8 @@
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"electron-store": "^8.2.0",
+		"hash-wasm": "^4.12.0",
+		"kdbxweb": "^2.1.1",
 		"lucide-react": "^1.34.0",
 		"react": "^19.2.8",
 		"react-dom": "^19.2.8",

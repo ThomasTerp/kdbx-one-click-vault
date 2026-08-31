@@ -1,5 +1,5 @@
 import "./assets/main.css";
-import OneClickVaultApp from "./dependencies/managers/OneClickVaultApp";
+import OneClickVaultApp from "./dependencies/OneClickVaultApp";
 import ViewManager from "./dependencies/managers/ViewManager";
 import ThemeManager from "./dependencies/managers/ThemeManager";
 
@@ -10,7 +10,6 @@ void (async () => {
 	// #region Managers
 	const viewManager = new ViewManager(DEFAULT_VIEW);
 	const themeManager = new ThemeManager();
-	await themeManager.initialize();
 	// #endregion
 
 	// #region App

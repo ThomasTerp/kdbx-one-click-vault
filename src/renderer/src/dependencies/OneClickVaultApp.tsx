@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import IApp from "./IApp";
+import IApp from "./managers/IApp";
 import OneClickVault from "@renderer/components/OneClickVault";
-import IViewManager from "./IViewManager";
+import IViewManager from "./managers/IViewManager";
 import ViewManagerContext from "@renderer/contexts/ViewManagerContext";
-import IThemeManager from "./IThemeManager";
+import IThemeManager from "./managers/IThemeManager";
 import ThemeManagerContext from "@renderer/contexts/ThemeManagerContext";
 
 export default class OneClickVaultApp implements IApp {
@@ -17,6 +17,11 @@ export default class OneClickVaultApp implements IApp {
 	}
 
 	async initialize(): Promise<void> {
+		await this._themeManager.initialize();
+		this.render();
+	}
+
+	private render() {
 		ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 			<React.StrictMode>
 				<ViewManagerContext.Provider value={this._viewManager}>

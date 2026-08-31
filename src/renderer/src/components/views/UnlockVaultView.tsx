@@ -10,6 +10,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { useShake } from "@/hooks/useShake";
 import { cn } from "@/lib/utils";
 import useViewManager from "@renderer/hooks/useViewManager";
+import { toast } from "../ui/toast";
 
 export default function UnlockVaultView({ className, ...props }: React.ComponentProps<"div">) {
 	const viewManager = useViewManager();
@@ -42,8 +43,13 @@ export default function UnlockVaultView({ className, ...props }: React.Component
 			setKeyFilePath(filePath);
 		}
 	};
-	const onNewVaultClick = () => {
-		viewManager.setView("vault");
+	const onNewVaultClick = async () => {
+		try {
+			await window.api.newVault();
+			viewManager.setView("vault");
+		} catch {
+			toast.add({ type: "error", description: "Failed to create new vault." });
+		}
 	};
 	const onUnlockClick = () => {
 		setIsSubmitted(true);
@@ -67,7 +73,7 @@ export default function UnlockVaultView({ className, ...props }: React.Component
 							<Tooltip>
 								<TooltipTrigger
 									render={
-										<Button variant="outline" size="icon" type="button" aria-label="New Vault" onClick={onNewVaultClick}>
+										<Button variant="outline" size="icon" type="button" aria-label="New Vault" onClick={() => void onNewVaultClick()}>
 											<Plus />
 										</Button>
 									}

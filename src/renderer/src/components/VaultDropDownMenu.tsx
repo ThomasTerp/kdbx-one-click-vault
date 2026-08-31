@@ -18,11 +18,38 @@ import useViewManager from "@renderer/hooks/useViewManager";
 import useThemeManager from "@renderer/hooks/useThemeManager";
 import useObservableState from "@renderer/hooks/useObservableState";
 import { Theme } from "@renderer/dependencies/managers/IThemeManager";
+import { toast } from "@/components/ui/toast";
 
 export default function VaultDropDownMenu() {
 	const viewManager = useViewManager();
 	const themeManager = useThemeManager();
 	const theme = useObservableState(themeManager.change$, () => themeManager.theme);
+	const onSaveClick = async () => {
+		try {
+			await window.api.saveVault();
+		} catch {
+			toast.add({ type: "error", description: "Failed to save vault." });
+		}
+	};
+	const onSaveAsClick = async () => {
+		try {
+			await window.api.saveVaultAs();
+		} catch {
+			toast.add({ type: "error", description: "Failed to save vault." });
+		}
+	};
+	const onLockClick = async () => {
+		try {
+			const canClose = await window.api.closeVault();
+			if (canClose) {
+				viewManager.setView("unlock-vault");
+			} else {
+				toast.add({ type: "warning", description: "Vault must be saved before locking." });
+			}
+		} catch {
+			toast.add({ type: "error", description: "Failed to lock vault." });
+		}
+	};
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger
@@ -34,12 +61,12 @@ export default function VaultDropDownMenu() {
 			/>
 			<DropdownMenuContent className="w-46">
 				<DropdownMenuGroup>
-					<DropdownMenuItem>
+					<DropdownMenuItem onClick={() => void onSaveClick()}>
 						<Save />
 						Save
 						<DropdownMenuShortcut>Ctrl+S</DropdownMenuShortcut>
 					</DropdownMenuItem>
-					<DropdownMenuItem>
+					<DropdownMenuItem onClick={() => void onSaveAsClick()}>
 						<SavePen />
 						Save As…
 					</DropdownMenuItem>
@@ -86,7 +113,7 @@ export default function VaultDropDownMenu() {
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
-					<DropdownMenuItem onClick={() => viewManager.setView("unlock-vault")}>
+					<DropdownMenuItem onClick={() => void onLockClick()}>
 						<Lock />
 						Lock
 						<DropdownMenuShortcut>Ctrl+L</DropdownMenuShortcut>
