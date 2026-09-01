@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Eye, EyeOff, FolderOpen, Unlock, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,10 +10,12 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { useShake } from "@/hooks/useShake";
 import { cn } from "@/lib/utils";
 import useVaultManager from "@renderer/hooks/useVaultManager";
+import useUnlockFieldsManager from "@renderer/hooks/useUnlockFieldsManager";
 import { toast } from "./ui/toast";
 
 export default function UnlockVault({ className, ...props }: React.ComponentProps<"div">) {
 	const vaultManager = useVaultManager();
+	const unlockFieldsManager = useUnlockFieldsManager();
 	const [vaultFilePath, setVaultFilePath] = useState("");
 	const [masterPassword, setMasterPassword] = useState("");
 	const [showMasterPassword, setShowMasterPassword] = useState(false);
@@ -30,6 +32,19 @@ export default function UnlockVault({ className, ...props }: React.ComponentProp
 		...(isCredentialsEmpty ? ["Master password and/or key file is required."] : []),
 		...(isCredentialsInvalid ? ["Master password and/or key file is incorrect."] : [])
 	];
+	useEffect(() => {
+		let cancelled = false;
+		void (async () => {
+			const unlockFields = await unlockFieldsManager.getUnlockFields();
+			if (!cancelled) {
+				setVaultFilePath(unlockFields.vaultFilePath);
+				setKeyFilePath(unlockFields.keyFilePath);
+			}
+		})();
+		return () => {
+			cancelled = true;
+		};
+	}, [unlockFieldsManager]);
 	const onChooseVaultFileClick = async () => {
 		const filePath = await window.api.selectFile("Select Vault File", [
 			{ name: "KeePass KDBX Files", extensions: ["kdbx"] },
@@ -70,7 +85,9 @@ export default function UnlockVault({ className, ...props }: React.ComponentProp
 				setIsLoadingVault(false);
 				setIsCredentialsInvalid(!isLoaded);
 				setIsVaultFileInvalid(false);
-				if (!isLoaded) {
+				if (isLoaded) {
+					await unlockFieldsManager.setUnlockFields({ vaultFilePath, keyFilePath });
+				} else {
 					shake();
 				}
 			} catch {

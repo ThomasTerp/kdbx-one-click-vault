@@ -5,6 +5,8 @@ import IApp from "./IApp";
 import IThemeManager from "./managers/IThemeManager";
 import { Theme } from "../../models/Theme";
 import IVaultManager from "./managers/IVaultManager";
+import IUnlockFieldsManager from "./managers/IUnlockFieldsManager";
+import { UnlockFields } from "../../models/UnlockFields";
 
 const APP_USER_MODEL_ID = "com.kdbx-one-click-vault.app";
 const WINDOW_WIDTH = 900;
@@ -13,10 +15,12 @@ const WINDOW_HEIGHT = 670;
 export default class OneClickVaultApp implements IApp {
 	private _themeManager: IThemeManager;
 	private _vaultManager: IVaultManager;
+	private _unlockFieldsManager: IUnlockFieldsManager;
 
-	constructor(themeManager: IThemeManager, vaultManager: IVaultManager) {
+	constructor(themeManager: IThemeManager, vaultManager: IVaultManager, unlockFieldsManager: IUnlockFieldsManager) {
 		this._themeManager = themeManager;
 		this._vaultManager = vaultManager;
+		this._unlockFieldsManager = unlockFieldsManager;
 	}
 
 	async initialize(): Promise<void> {
@@ -60,6 +64,13 @@ export default class OneClickVaultApp implements IApp {
 		ipcMain.handle("theme:get", async (): Promise<Theme> => this._themeManager.getTheme());
 		ipcMain.handle("theme:set", async (_event, theme: Theme): Promise<void> => {
 			await this._themeManager.setTheme(theme);
+		});
+		// #endregion
+
+		// #region Unlock fields
+		ipcMain.handle("unlockFields:get", async (): Promise<UnlockFields> => this._unlockFieldsManager.getUnlockFields());
+		ipcMain.handle("unlockFields:set", async (_event, unlockFields: UnlockFields): Promise<void> => {
+			await this._unlockFieldsManager.setUnlockFields(unlockFields);
 		});
 		// #endregion
 

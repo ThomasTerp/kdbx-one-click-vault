@@ -1,12 +1,15 @@
 import { ElectronAPI } from "@electron-toolkit/preload";
 import type { Theme } from "../models/Theme";
 import type { VaultData } from "../models/VaultData";
+import type { UnlockFields } from "../models/UnlockFields";
 
 interface Api {
 	selectFile: (title?: string, filters?: Electron.FileFilter[]) => Promise<string | null>;
 	getTheme: () => Promise<Theme>;
 	setTheme: (theme: Theme) => Promise<void>;
 	onThemeChanged: (callback: (theme: Theme) => void) => () => void;
+	getUnlockFields: () => Promise<UnlockFields>;
+	setUnlockFields: (unlockFields: UnlockFields) => Promise<void>;
 	getVaultData: () => Promise<VaultData | null>;
 	getIsDirty: () => Promise<boolean>;
 	getVaultFilePath: () => Promise<string | null>;

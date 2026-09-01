@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from "electron";
 import { electronAPI } from "@electron-toolkit/preload";
 import type { Theme } from "../models/Theme";
 import type { VaultData } from "../models/VaultData";
+import type { UnlockFields } from "../models/UnlockFields";
 
 // Custom APIs for renderer
 const api = {
@@ -14,6 +15,8 @@ const api = {
 		ipcRenderer.on("theme:changed", listener);
 		return () => ipcRenderer.removeListener("theme:changed", listener);
 	},
+	getUnlockFields: (): Promise<UnlockFields> => ipcRenderer.invoke("unlockFields:get") as Promise<UnlockFields>,
+	setUnlockFields: (unlockFields: UnlockFields): Promise<void> => ipcRenderer.invoke("unlockFields:set", unlockFields) as Promise<void>,
 	getVaultData: (): Promise<VaultData | null> => ipcRenderer.invoke("vault:getVaultData") as Promise<VaultData | null>,
 	getIsDirty: (): Promise<boolean> => ipcRenderer.invoke("vault:isDirty") as Promise<boolean>,
 	getVaultFilePath: (): Promise<string | null> => ipcRenderer.invoke("vault:getVaultFilePath") as Promise<string | null>,
