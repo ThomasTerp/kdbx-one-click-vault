@@ -9,6 +9,8 @@ export default interface IVaultManager {
 
 	newVault(): Promise<void>;
 
+	loadVault(vaultFilePath: string, password: string | null, keyFilePath: string | null): Promise<boolean>;
+
 	saveVault(): Promise<void>;
 
 	closeVault(): Promise<void>;

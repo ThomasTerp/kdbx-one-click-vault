@@ -24,6 +24,8 @@ const api = {
 		return () => ipcRenderer.removeListener("vault:changed", listener);
 	},
 	newVault: (): Promise<void> => ipcRenderer.invoke("vault:new") as Promise<void>,
+	loadVault: (vaultFilePath: string, password: string | null, keyFilePath: string | null): Promise<boolean> =>
+		ipcRenderer.invoke("vault:load", vaultFilePath, password, keyFilePath) as Promise<boolean>,
 	saveVault: (): Promise<void> => ipcRenderer.invoke("vault:save") as Promise<void>,
 	saveVaultAs: (): Promise<void> => ipcRenderer.invoke("vault:saveAs") as Promise<void>,
 	closeVault: (force?: boolean): Promise<boolean> => ipcRenderer.invoke("vault:close", force) as Promise<boolean>

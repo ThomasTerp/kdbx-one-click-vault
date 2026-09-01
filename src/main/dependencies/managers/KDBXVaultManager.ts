@@ -1,4 +1,4 @@
-import { writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { Observable, Subject } from "rxjs";
 import kdbxweb, { Kdbx } from "kdbxweb";
 import IVaultManager from "./IVaultManager";
@@ -45,6 +45,26 @@ export default class KDBXVaultManager implements IVaultManager {
 		this._kdbxVault = kdbxweb.Kdbx.create(credentials, NEW_VAULT_NAME);
 		this._isDirty = true;
 		this._change$.next();
+	}
+
+	async loadVault(vaultFilePath: string, password: string | null, keyFilePath: string | null): Promise<boolean> {
+		const [fileData, keyFileData] = await Promise.all([readFile(vaultFilePath), keyFilePath != null ? readFile(keyFilePath) : Promise.resolve(null)]);
+		const passwordValue = password != null && password !== "" ? kdbxweb.ProtectedValue.fromString(password) : null;
+		const credentials = new kdbxweb.Credentials(passwordValue, keyFileData);
+		let isLoaded: boolean;
+		try {
+			this._kdbxVault = await kdbxweb.Kdbx.load(kdbxweb.ByteUtils.arrayToBuffer(fileData), credentials);
+			this.vaultFilePath = vaultFilePath;
+			this._isDirty = false;
+			this._change$.next();
+			isLoaded = true;
+		} catch (error) {
+			if (!(error instanceof kdbxweb.KdbxError && error.code === kdbxweb.Consts.ErrorCodes.InvalidKey)) {
+				throw error;
+			}
+			isLoaded = false;
+		}
+		return isLoaded;
 	}
 
 	async saveVault(): Promise<void> {

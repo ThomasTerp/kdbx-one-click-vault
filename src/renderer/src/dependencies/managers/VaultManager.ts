@@ -48,6 +48,10 @@ export default class VaultManager implements IVaultManager {
 		await window.api.newVault();
 	}
 
+	async loadVault(vaultFilePath: string, password: string | null, keyFilePath: string | null): Promise<boolean> {
+		return await window.api.loadVault(vaultFilePath, password, keyFilePath);
+	}
+
 	async saveVault(): Promise<void> {
 		await window.api.saveVault();
 	}

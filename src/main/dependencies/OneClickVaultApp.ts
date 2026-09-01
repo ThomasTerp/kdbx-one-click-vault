@@ -47,7 +47,7 @@ export default class OneClickVaultApp implements IApp {
 			const { canceled, filePaths } = await (parent != null
 				? dialog.showOpenDialog(parent, { properties: ["openFile"], title, filters })
 				: dialog.showOpenDialog({ properties: ["openFile"], title, filters }));
-			return (!canceled && filePaths.at(0)) ?? null;
+			return !canceled ? (filePaths.at(0) ?? null) : null;
 		});
 		// #endregion
 
@@ -78,6 +78,12 @@ export default class OneClickVaultApp implements IApp {
 		ipcMain.handle("vault:new", async (): Promise<void> => {
 			await this._vaultManager.newVault();
 		});
+		ipcMain.handle(
+			"vault:load",
+			async (_event, vaultFilePath: string, password: string | null, keyFilePath: string | null): Promise<boolean> => {
+				return await this._vaultManager.loadVault(vaultFilePath, password, keyFilePath);
+			}
+		);
 		ipcMain.handle("vault:save", async (event): Promise<void> => {
 			const filePath = this._vaultManager.vaultFilePath ?? (await this.selectVaultSavePath(event));
 			if (filePath != null) {
@@ -119,7 +125,7 @@ export default class OneClickVaultApp implements IApp {
 					],
 					title: "Save Vault File"
 				}));
-		return (!canceled && filePath) || null;
+		return !canceled ? filePath : null;
 	}
 
 	private createWindow(): void {

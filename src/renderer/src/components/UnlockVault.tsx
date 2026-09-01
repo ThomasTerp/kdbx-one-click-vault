@@ -20,11 +20,16 @@ export default function UnlockVault({ className, ...props }: React.ComponentProp
 	const [keyFilePath, setKeyFilePath] = useState("");
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	const [isLoadingVault, setIsLoadingVault] = useState(false);
+	const [isCredentialsInvalid, setIsCredentialsInvalid] = useState(false);
+	const [isVaultFileInvalid, setIsVaultFileInvalid] = useState(false);
 	const [shake, stopShaking, shakeClassName] = useShake();
 	const isVaultFileEmpty = vaultFilePath === "";
 	const isCredentialsEmpty = masterPassword === "" && keyFilePath === "";
-	const isVaultFileInvalid = isSubmitted && isVaultFileEmpty;
-	const isCredentialsInvalid = isSubmitted && isCredentialsEmpty;
+	const vaultFileErrors = [...(isVaultFileEmpty ? ["Vault file is required."] : []), ...(isVaultFileInvalid ? ["Failed to load vault file."] : [])];
+	const credentialErrors = [
+		...(isCredentialsEmpty ? ["Master password and/or key file is required."] : []),
+		...(isCredentialsInvalid ? ["Master password and/or key file is incorrect."] : [])
+	];
 	const onChooseVaultFileClick = async () => {
 		const filePath = await window.api.selectFile("Select Vault File", [
 			{ name: "KeePass KDBX Files", extensions: ["kdbx"] },
@@ -32,6 +37,7 @@ export default function UnlockVault({ className, ...props }: React.ComponentProp
 		]);
 		if (filePath != null) {
 			setVaultFilePath(filePath);
+			setIsVaultFileInvalid(false);
 		}
 	};
 	const onChooseKeyFileClick = async () => {
@@ -41,6 +47,7 @@ export default function UnlockVault({ className, ...props }: React.ComponentProp
 		]);
 		if (filePath != null) {
 			setKeyFilePath(filePath);
+			setIsCredentialsInvalid(false);
 		}
 	};
 	const onNewVaultClick = async () => {
@@ -50,7 +57,7 @@ export default function UnlockVault({ className, ...props }: React.ComponentProp
 			toast.add({ type: "error", description: "Failed to create new vault." });
 		}
 	};
-	const onUnlockClick = () => {
+	const onUnlockClick = async () => {
 		setIsSubmitted(true);
 		if (isVaultFileEmpty || isCredentialsEmpty) {
 			shake();
@@ -58,6 +65,19 @@ export default function UnlockVault({ className, ...props }: React.ComponentProp
 			stopShaking();
 			setShowMasterPassword(false);
 			setIsLoadingVault(true);
+			try {
+				const isLoaded = await vaultManager.loadVault(vaultFilePath, masterPassword, keyFilePath !== "" ? keyFilePath : null);
+				setIsLoadingVault(false);
+				setIsCredentialsInvalid(!isLoaded);
+				setIsVaultFileInvalid(false);
+				if (!isLoaded) {
+					shake();
+				}
+			} catch {
+				setIsLoadingVault(false);
+				setIsVaultFileInvalid(true);
+				shake();
+			}
 		}
 	};
 	return (
@@ -82,14 +102,17 @@ export default function UnlockVault({ className, ...props }: React.ComponentProp
 					</CardHeader>
 					<CardContent>
 						<FieldGroup className="gap-3">
-							<Field data-invalid={isVaultFileInvalid}>
+							<Field data-invalid={isSubmitted && vaultFileErrors.length > 0}>
 								<FieldLabel>Vault file</FieldLabel>
 								<InputGroup>
 									<InputGroupInput
 										type="text"
-										aria-invalid={isVaultFileInvalid}
+										aria-invalid={isSubmitted && vaultFileErrors.length > 0}
 										value={vaultFilePath}
-										onChange={(e) => setVaultFilePath(e.target.value)}
+										onChange={(e) => {
+											setVaultFilePath(e.target.value);
+											setIsVaultFileInvalid(false);
+										}}
 									/>
 									<InputGroupAddon align="inline-end">
 										<Tooltip>
@@ -108,16 +131,19 @@ export default function UnlockVault({ className, ...props }: React.ComponentProp
 										</Tooltip>
 									</InputGroupAddon>
 								</InputGroup>
-								{isVaultFileInvalid && <FieldError errors={[{ message: "Vault file is required." }]} />}
+								{isSubmitted && vaultFileErrors.length > 0 && <FieldError errors={vaultFileErrors.map((e) => ({ message: e }))} />}
 							</Field>
-							<Field data-invalid={isCredentialsInvalid}>
+							<Field data-invalid={isSubmitted && credentialErrors.length > 0}>
 								<FieldLabel>Master password</FieldLabel>
 								<InputGroup>
 									<InputGroupInput
 										type={showMasterPassword ? "text" : "password"}
-										aria-invalid={isCredentialsInvalid}
+										aria-invalid={isSubmitted && credentialErrors.length > 0}
 										value={masterPassword}
-										onChange={(e) => setMasterPassword(e.target.value)}
+										onChange={(e) => {
+											setMasterPassword(e.target.value);
+											setIsCredentialsInvalid(false);
+										}}
 									/>
 									<InputGroupAddon align="inline-end">
 										<Tooltip>
@@ -136,24 +162,19 @@ export default function UnlockVault({ className, ...props }: React.ComponentProp
 										</Tooltip>
 									</InputGroupAddon>
 								</InputGroup>
-								{isCredentialsInvalid && (
-									<FieldError
-										errors={[
-											{
-												message: "Master password and/or key file is required."
-											}
-										]}
-									/>
-								)}
+								{isSubmitted && credentialErrors.length > 0 && <FieldError errors={credentialErrors.map((e) => ({ message: e }))} />}
 							</Field>
-							<Field data-invalid={isCredentialsInvalid}>
+							<Field data-invalid={isSubmitted && credentialErrors.length > 0}>
 								<FieldLabel>Key file</FieldLabel>
 								<InputGroup>
 									<InputGroupInput
 										type="text"
-										aria-invalid={isCredentialsInvalid}
+										aria-invalid={isSubmitted && credentialErrors.length > 0}
 										value={keyFilePath}
-										onChange={(e) => setKeyFilePath(e.target.value)}
+										onChange={(e) => {
+											setKeyFilePath(e.target.value);
+											setIsCredentialsInvalid(false);
+										}}
 									/>
 									<InputGroupAddon align="inline-end">
 										<Tooltip>
@@ -172,7 +193,7 @@ export default function UnlockVault({ className, ...props }: React.ComponentProp
 						</FieldGroup>
 					</CardContent>
 					<CardFooter>
-						<Button className="w-full" onClick={onUnlockClick}>
+						<Button className="w-full" onClick={() => void onUnlockClick()}>
 							{isLoadingVault ? <Spinner data-icon="inline-start" /> : <Unlock data-icon="inline-start" />}
 							{isLoadingVault ? "Unlocking…" : "Unlock"}
 						</Button>
