@@ -26,12 +26,8 @@ export default function UnlockVault({ className, ...props }: React.ComponentProp
 	const [isVaultFileInvalid, setIsVaultFileInvalid] = useState(false);
 	const [shake, stopShaking, shakeClassName] = useShake();
 	const isVaultFileEmpty = vaultFilePath === "";
-	const isCredentialsEmpty = masterPassword === "" && keyFilePath === "";
 	const vaultFileErrors = [...(isVaultFileEmpty ? ["Vault file is required."] : []), ...(isVaultFileInvalid ? ["Failed to load vault file."] : [])];
-	const credentialErrors = [
-		...(isCredentialsEmpty ? ["Master password and/or key file is required."] : []),
-		...(isCredentialsInvalid ? ["Master password and/or key file is incorrect."] : [])
-	];
+	const credentialErrors = [...(isCredentialsInvalid ? ["Master password and/or key file is incorrect."] : [])];
 	useEffect(() => {
 		let cancelled = false;
 		void (async () => {
@@ -74,7 +70,7 @@ export default function UnlockVault({ className, ...props }: React.ComponentProp
 	};
 	const onUnlockClick = async () => {
 		setIsSubmitted(true);
-		if (isVaultFileEmpty || isCredentialsEmpty) {
+		if (isVaultFileEmpty) {
 			shake();
 		} else {
 			stopShaking();
