@@ -12,7 +12,7 @@ export default function VaultHeader({ className, ...props }: React.ComponentProp
 	return (
 		<header className={cn("flex items-center gap-2 border-b p-2", className)} {...props}>
 			<VaultDropDownMenu />
-			<h1 className="text-base font-medium whitespace-nowrap">{vaultData.name}</h1>
+			<h1 className="text-base font-medium whitespace-nowrap mr-3">{vaultData.name}</h1>
 			<VaultSearch className="max-w-xl mx-auto" />
 			<Tooltip>
 				<TooltipTrigger
