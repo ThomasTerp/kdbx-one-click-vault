@@ -19,7 +19,6 @@ export default function VaultHeader({ className, ...props }: React.ComponentProp
 	const vaultFileName = getFileNameFromPath(vaultFilePath);
 	const vaultData = useVaultData();
 	const vaultName = vaultData.name !== "" ? vaultData.name : (vaultFileName ?? DEFAULT_VAULT_NAME);
-	console.log(vaultFilePath);
 	return (
 		<header className={cn("flex items-center gap-2 border-b p-2", className)} {...props}>
 			<VaultDropDownMenu />

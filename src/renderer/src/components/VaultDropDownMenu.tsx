@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, Lock, Settings, Save, SavePen, Toolbox, CircleQuestionMark, Palette, Sun, Moon, Monitor } from "lucide-react";
+import { Menu, Lock, Settings, Save, SavePen, Toolbox, CircleQuestionMark, Palette, Sun, Moon, Monitor, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -107,10 +107,6 @@ export default function VaultDropDownMenu() {
 							<Toolbox />
 							Tools
 						</DropdownMenuItem>
-						<DropdownMenuItem>
-							<Settings />
-							Settings
-						</DropdownMenuItem>
 						<DropdownMenuSub>
 							<DropdownMenuSubTrigger>
 								<Palette />
@@ -137,8 +133,12 @@ export default function VaultDropDownMenu() {
 					<DropdownMenuSeparator />
 					<DropdownMenuGroup>
 						<DropdownMenuItem>
-							<CircleQuestionMark />
-							About
+							<Settings2 />
+							Vault Settings
+						</DropdownMenuItem>
+						<DropdownMenuItem>
+							<Settings />
+							Options
 						</DropdownMenuItem>
 					</DropdownMenuGroup>
 					<DropdownMenuSeparator />
