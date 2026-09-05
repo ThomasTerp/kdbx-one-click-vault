@@ -98,7 +98,7 @@ export default function VaultDropDownMenu() {
 						</DropdownMenuItem>
 						<DropdownMenuItem onClick={() => void onSaveAsClick()}>
 							<SavePen />
-							Save As…
+							Save As
 						</DropdownMenuItem>
 					</DropdownMenuGroup>
 					<DropdownMenuSeparator />
