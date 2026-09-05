@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, Lock, Settings, Save, SavePen, Toolbox, CircleQuestionMark, Palette, Sun, Moon, Monitor, Settings2 } from "lucide-react";
+import { Menu, Lock, Settings, Save, SavePen, Toolbox, Palette, Sun, Moon, Monitor, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
