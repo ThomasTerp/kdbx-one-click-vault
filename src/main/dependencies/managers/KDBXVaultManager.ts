@@ -5,8 +5,6 @@ import IVaultManager from "./IVaultManager";
 import { VaultData } from "../../../models/VaultData";
 import argon2Hash from "../../utilities/argon2Hash";
 
-const NEW_VAULT_NAME = "Vault";
-
 export default class KDBXVaultManager implements IVaultManager {
 	vaultFilePath: string | null;
 	private _change$: Subject<void>;
@@ -42,7 +40,7 @@ export default class KDBXVaultManager implements IVaultManager {
 
 	async newVault(): Promise<void> {
 		const credentials = new kdbxweb.Credentials(null, null);
-		this._kdbxVault = kdbxweb.Kdbx.create(credentials, NEW_VAULT_NAME);
+		this._kdbxVault = kdbxweb.Kdbx.create(credentials, "");
 		this._isDirty = true;
 		this._change$.next();
 	}

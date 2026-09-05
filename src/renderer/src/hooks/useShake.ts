@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
 
-const CONST_SHAKE_CLASS = "animate-shake";
+const CONST_SHAKE_CLASS_NAME = "animate-shake";
 
-export function useShake(): readonly [() => void, () => void, string | null] {
+export function useShake(): [() => void, () => void, string | null] {
 	const [isShaking, setIsShaking] = useState(false);
 	const shake = useCallback((): void => {
 		setIsShaking(false);
@@ -11,6 +11,6 @@ export function useShake(): readonly [() => void, () => void, string | null] {
 	const stopShaking = useCallback((): void => {
 		setIsShaking(false);
 	}, []);
-	const shakeClassName = isShaking ? CONST_SHAKE_CLASS : null;
-	return [shake, stopShaking, shakeClassName] as const;
+	const shakeClassName = isShaking ? CONST_SHAKE_CLASS_NAME : null;
+	return [shake, stopShaking, shakeClassName];
 }
