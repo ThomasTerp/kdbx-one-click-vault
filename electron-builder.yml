@@ -1,4 +1,4 @@
-appId: com.thomasterp.kdbx-one-click-vault
+appId: com.kdbx-one-click-vault
 productName: KDBX One-Click Vault
 directories:
     buildResources: build
