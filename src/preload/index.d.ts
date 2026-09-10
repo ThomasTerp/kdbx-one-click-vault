@@ -13,6 +13,7 @@ interface Api {
 	getVaultData: () => Promise<VaultData | null>;
 	getIsDirty: () => Promise<boolean>;
 	getVaultFilePath: () => Promise<string | null>;
+	getEntryFieldValue: (entryUUID: string, fieldName: string) => Promise<string | undefined>;
 	onVaultChanged: (callback: (vaultData: VaultData | null, isDirty: boolean, vaultFilePath: string | null) => void) => () => void;
 	newVault: () => Promise<void>;
 	loadVault: (vaultFilePathilePath: string, password: string | null, keyFilePath: string | null) => Promise<boolean>;

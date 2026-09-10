@@ -86,6 +86,9 @@ export default class OneClickVaultApp implements IApp {
 		ipcMain.handle("vault:getVaultData", () => this._vaultManager.vaultData);
 		ipcMain.handle("vault:isDirty", () => this._vaultManager.isDirty);
 		ipcMain.handle("vault:getVaultFilePath", () => this._vaultManager.vaultFilePath);
+		ipcMain.handle("vault:getEntryFieldValue", (_event, entryUUID: string, fieldName: string) =>
+			this._vaultManager.getEntryFieldValue(entryUUID, fieldName)
+		);
 		ipcMain.handle("vault:new", async (): Promise<void> => {
 			await this._vaultManager.newVault();
 		});

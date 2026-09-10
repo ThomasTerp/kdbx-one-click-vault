@@ -20,6 +20,8 @@ const api = {
 	getVaultData: (): Promise<VaultData | null> => ipcRenderer.invoke("vault:getVaultData") as Promise<VaultData | null>,
 	getIsDirty: (): Promise<boolean> => ipcRenderer.invoke("vault:isDirty") as Promise<boolean>,
 	getVaultFilePath: (): Promise<string | null> => ipcRenderer.invoke("vault:getVaultFilePath") as Promise<string | null>,
+	getEntryFieldValue: (entryUUID: string, fieldName: string): Promise<string | undefined> =>
+		ipcRenderer.invoke("vault:getEntryFieldValue", entryUUID, fieldName) as Promise<string | undefined>,
 	onVaultChanged: (callback: (vaultData: VaultData | null, isDirty: boolean, vaultFilePath: string | null) => void): (() => void) => {
 		const listener = (_event: Electron.IpcRendererEvent, vaultData: VaultData | null, isDirty: boolean, vaultFilePath: string | null): void =>
 			callback(vaultData, isDirty, vaultFilePath);

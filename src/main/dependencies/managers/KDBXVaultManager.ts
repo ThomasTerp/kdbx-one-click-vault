@@ -4,6 +4,9 @@ import kdbxweb, { Kdbx } from "kdbxweb";
 import IVaultManager from "./IVaultManager";
 import { VaultData } from "../../../models/VaultData";
 import argon2Hash from "../../utilities/argon2Hash";
+import getKDBXGroupEntries from "../../utilities/getKDBXGroupEntries";
+
+const DEFAULT_FIELDS_ORDER = ["Title", "URL", "UserName", "Password", "Notes"] as const;
 
 export default class KDBXVaultManager implements IVaultManager {
 	vaultFilePath: string | null;
@@ -24,18 +27,44 @@ export default class KDBXVaultManager implements IVaultManager {
 	}
 
 	get vaultData(): VaultData | null {
-		let vaultInfo: VaultData | null;
+		let vaultData: VaultData | null;
 		if (this._kdbxVault != null) {
 			const name = this._kdbxVault.meta.name ?? "";
-			vaultInfo = { name };
+			const recycleBinUUID = this._kdbxVault.meta.recycleBinUuid?.id;
+			const entries = this._kdbxVault.groups
+				.flatMap((group) => getKDBXGroupEntries(group))
+				.map(({ entry, groupPath }) => {
+					const fieldsOrderData = entry.customData?.get("fieldsData")?.value;
+					return {
+						uuid: entry.uuid.id,
+						groupPath,
+						fields: [...entry.fields].map(([name, field]) => {
+							const isProtected = field instanceof kdbxweb.ProtectedValue;
+							return {
+								name,
+								field: !isProtected ? field : undefined,
+								isProtected
+							};
+						}),
+						fieldsOrder: fieldsOrderData != null ? (JSON.parse(fieldsOrderData) as string[]) : [...DEFAULT_FIELDS_ORDER]
+					};
+				});
+			vaultData = { name, recycleBinUUID, entries };
 		} else {
-			vaultInfo = null;
+			vaultData = null;
 		}
-		return vaultInfo;
+		return vaultData;
 	}
 
 	get isDirty(): boolean {
 		return this._isDirty;
+	}
+
+	getEntryFieldValue(entryUUID: string, fieldName: string): string | undefined {
+		const entry = this._kdbxVault?.groups.flatMap((group) => [...group.allEntries()]).find((entry) => entry.uuid.id === entryUUID);
+		const field = entry?.fields.get(fieldName);
+		const value = field instanceof kdbxweb.ProtectedValue ? field.getText() : field;
+		return value;
 	}
 
 	async newVault(): Promise<void> {

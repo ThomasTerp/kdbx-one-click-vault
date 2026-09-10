@@ -1,11 +1,10 @@
-import * as React from "react";
-
-import { cn } from "@/lib/utils";
+import { cn } from "@renderer/lib/utils";
+import VaultEntryLines from "./VaultEntryLines";
 
 export default function VaultContent({ className, ...props }: React.ComponentProps<"div">) {
 	return (
-		<div className={cn("flex items-center justify-center", className)} {...props}>
-			Vault content
+		<div className={cn("flex flex-col gap-6 p-4", className)} {...props}>
+			<VaultEntryLines />
 		</div>
 	);
 }

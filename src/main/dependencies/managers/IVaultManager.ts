@@ -7,6 +7,8 @@ export default interface IVaultManager {
 	readonly vaultData: VaultData | null;
 	readonly isDirty: boolean;
 
+	getEntryFieldValue(entryUUID: string, fieldName: string): string | undefined;
+
 	newVault(): Promise<void>;
 
 	loadVault(vaultFilePath: string, password: string | null, keyFilePath: string | null): Promise<boolean>;

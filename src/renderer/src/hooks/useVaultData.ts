@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import VaultDataContext from "../contexts/VaultDataContext";
-import { VaultData } from "@renderer/dependencies/managers/IVaultManager";
+import { VaultData } from "../../../models/VaultData";
 
 export default function useVaultData(): VaultData {
 	const context = useContext(VaultDataContext);

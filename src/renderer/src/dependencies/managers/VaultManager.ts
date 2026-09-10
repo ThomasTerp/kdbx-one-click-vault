@@ -1,5 +1,6 @@
 import { Observable, Subject } from "rxjs";
-import IVaultManager, { VaultData } from "./IVaultManager";
+import IVaultManager from "./IVaultManager";
+import { VaultData } from "../../../../models/VaultData";
 
 export default class VaultManager implements IVaultManager {
 	private _change$: Subject<void>;
@@ -42,6 +43,10 @@ export default class VaultManager implements IVaultManager {
 			this._vaultFilePath = vaultFilePath;
 			this._change$.next();
 		});
+	}
+
+	async getEntryFieldValue(entryUUID: string, fieldName: string): Promise<string | undefined> {
+		return await window.api.getEntryFieldValue(entryUUID, fieldName);
 	}
 
 	async newVault(): Promise<void> {
