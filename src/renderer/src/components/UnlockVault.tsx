@@ -28,6 +28,8 @@ export default function UnlockVault({ className, ...props }: React.ComponentProp
 	const isVaultFileEmpty = vaultFilePath === "";
 	const vaultFileErrors = [...(isVaultFileEmpty ? ["Vault file is required."] : []), ...(isVaultFileInvalid ? ["Failed to load vault file."] : [])];
 	const credentialErrors = [...(isCredentialsInvalid ? ["Master password and/or key file is incorrect."] : [])];
+
+	// #region Apply unlock fields
 	useEffect(() => {
 		let cancelled = false;
 		void (async () => {
@@ -41,6 +43,9 @@ export default function UnlockVault({ className, ...props }: React.ComponentProp
 			cancelled = true;
 		};
 	}, [unlockFieldsManager]);
+	// #endregion
+
+	// #region Events
 	const onChooseVaultFileClick = async () => {
 		const filePath = await window.api.selectFile("Select Vault File", [
 			{ name: "KeePass KDBX Files", extensions: ["kdbx"] },
@@ -93,6 +98,8 @@ export default function UnlockVault({ className, ...props }: React.ComponentProp
 			}
 		}
 	};
+	// #endregion
+
 	return (
 		<div className={cn("flex items-center justify-center p-4", className)} {...props}>
 			<Card className={cn("w-full min-w-3xs max-w-sm", shakeClassName)} onAnimationEnd={stopShaking}>

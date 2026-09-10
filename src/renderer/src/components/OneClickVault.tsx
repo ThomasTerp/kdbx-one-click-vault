@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
 import { TooltipProvider } from "./ui/tooltip";
 import { Toaster } from "./ui/toast";
 import UnlockVault from "./UnlockVault";
@@ -17,9 +17,14 @@ export default function OneClickVault() {
 	const vaultData = useObservableState(vaultManager.change$, () => vaultManager.vaultData);
 	const themeManager = useThemeManager();
 	const isDark = useObservableState(themeManager.change$, () => themeManager.isDark);
+
+	// #region Apply theme
 	useEffect(() => {
 		document.documentElement.classList.toggle(DARK_CLASS, isDark);
 	}, [isDark]);
+	// #endregion
+
+	// #region Apply title
 	useEffect(() => {
 		const updateTitle = () => {
 			document.title = `${vaultManager.vaultData != null ? `${vaultManager.vaultFilePath ?? ""}${vaultManager.isDirty ? "*" : ""} - ` : ""}${TITLE}`;
@@ -30,8 +35,10 @@ export default function OneClickVault() {
 		});
 		return () => subscription.unsubscribe();
 	}, [vaultManager]);
+	// #endregion
+
 	return (
-		<TooltipProvider>
+		<Providers>
 			{vaultData == null ? (
 				<UnlockVault className={CLASS_NAME} />
 			) : (
@@ -40,6 +47,10 @@ export default function OneClickVault() {
 				</VaultDataContext.Provider>
 			)}
 			<Toaster />
-		</TooltipProvider>
+		</Providers>
 	);
+}
+
+function Providers({ children }: { children: ReactNode }) {
+	return <TooltipProvider>{children}</TooltipProvider>;
 }

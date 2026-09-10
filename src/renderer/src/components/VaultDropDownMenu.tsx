@@ -36,6 +36,8 @@ export default function VaultDropDownMenu() {
 	const vaultManager = useVaultManager();
 	const theme = useObservableState(themeManager.change$, () => themeManager.theme);
 	const [isLockDialogOpen, setIsLockDialogOpen] = useState(false);
+
+	// #region Events
 	const onSaveClick = async () => {
 		try {
 			await vaultManager.saveVault();
@@ -79,6 +81,8 @@ export default function VaultDropDownMenu() {
 			toast.add({ type: "error", description: "Failed to lock vault." });
 		}
 	};
+	// #endregion
+
 	return (
 		<>
 			<DropdownMenu>
