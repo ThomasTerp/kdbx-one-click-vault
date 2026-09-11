@@ -35,8 +35,7 @@ export default function VaultEntryFieldCopyButton({ entryUUID, entryFieldData }:
 	return (
 		<div
 			className={cn(
-				"relative flex flex-col px-2 py-1 text-sm text-card-foreground cursor-pointer rounded-md overflow-hidden text-nowrap hover:bg-accent",
-				isCopied && "bg-accent"
+				"relative flex flex-col px-2 py-1 text-sm text-card-foreground cursor-pointer rounded-md overflow-hidden text-nowrap hover:bg-accent"
 			)}
 			onClick={() => {
 				void onClick();
@@ -53,7 +52,7 @@ export default function VaultEntryFieldCopyButton({ entryUUID, entryFieldData }:
 					readOnly
 				/>
 			) : (
-				<div className="min-w-16 max-w-64 truncate">{field}</div>
+				<div className={cn("max-w-64 truncate", isCopied && "min-w-16")}>{field}</div>
 			)}
 			{isCopied && (
 				<div className="absolute inset-0 flex items-center justify-center pointer-events-none">

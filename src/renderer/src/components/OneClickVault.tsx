@@ -10,7 +10,7 @@ import useThemeManager from "@renderer/hooks/useThemeManager";
 
 const TITLE = "One Click Vault";
 const DARK_CLASS = "dark";
-const CLASS_NAME = "min-h-screen select-none";
+const CLASS_NAME = "h-screen select-none";
 
 export default function OneClickVault() {
 	const vaultManager = useVaultManager();
