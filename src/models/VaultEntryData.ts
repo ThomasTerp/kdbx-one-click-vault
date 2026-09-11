@@ -6,4 +6,5 @@ export interface VaultEntryData {
 	groupPath: VaultGroupData[];
 	fields: VaultEntryFieldData[];
 	fieldsOrder: string[];
+	tags: string[];
 }

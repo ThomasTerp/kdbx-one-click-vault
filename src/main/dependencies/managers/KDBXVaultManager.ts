@@ -46,7 +46,8 @@ export default class KDBXVaultManager implements IVaultManager {
 								isProtected
 							};
 						}),
-						fieldsOrder: fieldsOrderData != null ? (JSON.parse(fieldsOrderData) as string[]) : [...DEFAULT_FIELDS_ORDER]
+						fieldsOrder: fieldsOrderData != null ? (JSON.parse(fieldsOrderData) as string[]) : [...DEFAULT_FIELDS_ORDER],
+						tags: entry.tags
 					};
 				});
 			vaultData = { name, recycleBinUUID, entries };

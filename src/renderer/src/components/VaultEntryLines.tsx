@@ -1,19 +1,25 @@
 import * as React from "react";
-
 import { cn } from "@/lib/utils";
 import useVaultData from "@renderer/hooks/useVaultData";
 import { VaultEntryData } from "../../../models/VaultEntryData";
 import VaultGroupData from "../../../models/VaultGroupData";
 import VaultEntryLine from "./VaultEntryLine";
+import { Star } from "lucide-react";
+
+const FAVORITE_TAG = "Favorite";
 
 export default function VaultEntryLines({ className, ...props }: React.ComponentProps<"div">) {
 	const vaultData = useVaultData();
+	const entries = React.useMemo(
+		() => vaultData.entries.filter((entryData) => !entryData.groupPath.some((group) => group.uuid === vaultData.recycleBinUUID)),
+		[vaultData.entries, vaultData.recycleBinUUID]
+	);
+	const favoriteEntries = React.useMemo(() => entries.filter((entryData) => entryData.tags.includes(FAVORITE_TAG)), [entries]);
 	const entryGroups = React.useMemo(() => {
 		const groups: {
 			groupPath: VaultGroupData[];
 			entries: VaultEntryData[];
 		}[] = [];
-		const entries = vaultData.entries.filter((entryData) => !entryData.groupPath.some((group) => group.uuid === vaultData.recycleBinUUID));
 		for (const entryData of entries) {
 			const existingGroup = groups.find(
 				(group) =>
@@ -27,9 +33,20 @@ export default function VaultEntryLines({ className, ...props }: React.Component
 			}
 		}
 		return groups;
-	}, [vaultData.entries, vaultData.recycleBinUUID]);
+	}, [entries]);
 	return (
 		<div className={cn("flex flex-col gap-6", className)} {...props}>
+			{favoriteEntries.length > 0 && (
+				<div className="flex flex-col gap-3">
+					<h2 className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground overflow-hidden text-nowrap">
+						<Star className="size-4" />
+						Favorites
+					</h2>
+					{favoriteEntries.map((entryData, entryDataIndex) => (
+						<VaultEntryLine key={entryDataIndex} className="w-full" entryData={entryData} />
+					))}
+				</div>
+			)}
 			{entryGroups.map((entryGroup, entryGroupIndex) => (
 				<div key={entryGroupIndex} className="flex flex-col gap-3">
 					{entryGroup.groupPath.length > 0 && (
