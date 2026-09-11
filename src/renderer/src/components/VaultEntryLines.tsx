@@ -5,11 +5,19 @@ import { VaultEntryData } from "../../../models/VaultEntryData";
 import VaultGroupData from "../../../models/VaultGroupData";
 import VaultEntryLine from "./VaultEntryLine";
 import { Star } from "lucide-react";
+import useObservableState from "@renderer/hooks/useObservableState";
+import getFileNameFromPath from "@renderer/utilities/getFileNameFromPath";
+import useVaultManager from "@renderer/hooks/useVaultManager";
 
+const DEFAULT_VAULT_NAME = "Vault";
 const FAVORITE_TAG = "Favorite";
 
 export default function VaultEntryLines({ className, ...props }: React.ComponentProps<"div">) {
 	const vaultData = useVaultData();
+	const vaultManager = useVaultManager();
+	const vaultFilePath = useObservableState(vaultManager.change$, () => vaultManager.vaultFilePath);
+	const vaultFileName = getFileNameFromPath(vaultFilePath);
+	const vaultName = vaultData.name !== "" ? vaultData.name : (vaultFileName ?? DEFAULT_VAULT_NAME);
 	const entries = React.useMemo(
 		() => vaultData.entries.filter((entryData) => !entryData.groupPath.some((group) => group.uuid === vaultData.recycleBinUUID)),
 		[vaultData.entries, vaultData.recycleBinUUID]
@@ -35,11 +43,11 @@ export default function VaultEntryLines({ className, ...props }: React.Component
 		return groups;
 	}, [entries]);
 	return (
-		<div className={cn("flex flex-col gap-6", className)} {...props}>
+		<div className={cn("flex flex-col gap-4", className)} {...props}>
 			{favoriteEntries.length > 0 && (
 				<div className="flex flex-col gap-3">
 					<h2 className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground overflow-hidden text-nowrap">
-						<Star className="size-4" />
+						<Star className="size-4 fill-current" />
 						Favorites
 					</h2>
 					{favoriteEntries.map((entryData, entryDataIndex) => (
@@ -49,11 +57,9 @@ export default function VaultEntryLines({ className, ...props }: React.Component
 			)}
 			{entryGroups.map((entryGroup, entryGroupIndex) => (
 				<div key={entryGroupIndex} className="flex flex-col gap-3">
-					{entryGroup.groupPath.length > 0 && (
-						<h2 className="text-sm font-medium text-muted-foreground overflow-hidden text-nowrap">
-							{entryGroup.groupPath.map((group) => group.name).join(" → ")}
-						</h2>
-					)}
+					<h2 className="text-sm font-medium text-muted-foreground overflow-hidden text-nowrap">
+						{entryGroup.groupPath.length > 0 ? entryGroup.groupPath.map((group) => group.name).join(" → ") : vaultName}
+					</h2>
 					{entryGroup.entries.map((entryData, entryDataIndex) => (
 						<VaultEntryLine key={entryDataIndex} className="w-full" entryData={entryData} />
 					))}
