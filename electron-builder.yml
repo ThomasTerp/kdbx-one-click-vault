@@ -1,5 +1,5 @@
 appId: com.kdbx-one-click-vault
-productName: KDBX One-Click Vault
+productName: One Click Vault
 directories:
     buildResources: build
     output: dist
