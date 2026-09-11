@@ -6,7 +6,7 @@ import { VaultData } from "../../../models/VaultData";
 import argon2Hash from "../../utilities/argon2Hash";
 import getKDBXGroupEntries from "../../utilities/getKDBXGroupEntries";
 
-const DEFAULT_FIELDS_ORDER = ["Title", "URL", "UserName", "Password", "Notes"] as const;
+const DEFAULT_FIELDS_ORDER = ["Title", "URL", "Email", "UserName", "Password", "Notes"] as const;
 
 export default class KDBXVaultManager implements IVaultManager {
 	vaultFilePath: string | null;

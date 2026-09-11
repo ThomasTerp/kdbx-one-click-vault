@@ -20,13 +20,13 @@ export default function VaultHeader({ className, ...props }: React.ComponentProp
 	const vaultData = useVaultData();
 	const vaultName = vaultData.name !== "" ? vaultData.name : (vaultFileName ?? DEFAULT_VAULT_NAME);
 	return (
-		<header className={cn("flex items-center gap-2 border-b p-2", className)} {...props}>
+		<header className={cn("grid grid-cols-[auto_auto_1fr_auto] items-center gap-2 border-b p-2", className)} {...props}>
 			<VaultDropDownMenu />
-			<h1 className="text-base font-medium whitespace-nowrap mr-3">
+			<h1 className="min-w-16 text-base font-medium whitespace-nowrap mr-3 truncate">
 				{vaultName}
 				{isDirty ? "*" : ""}
 			</h1>
-			<VaultSearch className="max-w-xl xl:max-w-3xl mx-auto" />
+			<VaultSearch className="min-w-40 max-w-xl xl:max-w-3xl mx-auto" />
 			<Tooltip>
 				<TooltipTrigger
 					render={

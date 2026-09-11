@@ -33,7 +33,9 @@ export default function VaultEntryLines({ className, ...props }: React.Component
 			{entryGroups.map((entryGroup, entryGroupIndex) => (
 				<div key={entryGroupIndex} className="flex flex-col gap-3">
 					{entryGroup.groupPath.length > 0 && (
-						<h2 className="text-sm font-medium text-muted-foreground">{entryGroup.groupPath.map((group) => group.name).join(" → ")}</h2>
+						<h2 className="text-sm font-medium text-muted-foreground overflow-hidden text-nowrap">
+							{entryGroup.groupPath.map((group) => group.name).join(" → ")}
+						</h2>
 					)}
 					{entryGroup.entries.map((entryData, entryDataIndex) => (
 						<VaultEntryLine key={entryDataIndex} className="w-full" entryData={entryData} />

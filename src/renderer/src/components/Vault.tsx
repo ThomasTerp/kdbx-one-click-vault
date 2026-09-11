@@ -5,9 +5,9 @@ import VaultContent from "./VaultContent";
 
 export default function Vault({ className, ...props }: React.ComponentProps<"div">) {
 	return (
-		<div className={cn("flex flex-col", className)} {...props}>
+		<div className={cn("grid grid-rows-[auto_1fr]", className)} {...props}>
 			<VaultHeader />
-			<VaultContent className="flex-1" />
+			<VaultContent />
 		</div>
 	);
 }
