@@ -5,6 +5,7 @@ import IVaultManager from "./IVaultManager";
 import { VaultData } from "../../../models/VaultData";
 import argon2Hash from "../../utilities/argon2Hash";
 import getKDBXGroupEntries from "../../utilities/getKDBXGroupEntries";
+import { VaultEntryData } from "../../../models/VaultEntryData";
 
 const DEFAULT_FIELDS_ORDER = ["Title", "URL", "Email", "UserName", "Password", "Notes"] as const;
 
@@ -31,13 +32,13 @@ export default class KDBXVaultManager implements IVaultManager {
 		if (this._kdbxVault != null) {
 			const name = this._kdbxVault.meta.name ?? "";
 			const recycleBinUUID = this._kdbxVault.meta.recycleBinUuid?.id;
-			const entries = this._kdbxVault.groups
+			const vaultEntriesData: VaultEntryData[] = this._kdbxVault.groups
 				.flatMap((group) => getKDBXGroupEntries(group))
-				.map(({ entry, groupPath }) => {
+				.map(({ entry, vaultGroupDataPath }) => {
 					const fieldsOrderData = entry.customData?.get("fieldsData")?.value;
 					return {
 						uuid: entry.uuid.id,
-						groupPath,
+						groupPath: vaultGroupDataPath,
 						fields: [...entry.fields].map(([name, field]) => {
 							const isProtected = field instanceof kdbxweb.ProtectedValue;
 							return {
@@ -50,7 +51,7 @@ export default class KDBXVaultManager implements IVaultManager {
 						tags: entry.tags
 					};
 				});
-			vaultData = { name, recycleBinUUID, entries };
+			vaultData = { name, recycleBinUUID, entries: vaultEntriesData };
 		} else {
 			vaultData = null;
 		}

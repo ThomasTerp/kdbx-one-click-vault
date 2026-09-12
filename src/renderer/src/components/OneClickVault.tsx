@@ -7,8 +7,8 @@ import useVaultManager from "@renderer/hooks/useVaultManager";
 import VaultDataContext from "@renderer/contexts/VaultDataContext";
 import useObservableState from "@renderer/hooks/useObservableState";
 import useThemeManager from "@renderer/hooks/useThemeManager";
+import { TITLE } from "@renderer/global-constants";
 
-const TITLE = "One Click Vault";
 const DARK_CLASS = "dark";
 const CLASS_NAME = "h-screen select-none";
 

@@ -1,6 +1,8 @@
 import { Observable, Subject } from "rxjs";
 import IVaultManager from "./IVaultManager";
 import { VaultData } from "../../../../models/VaultData";
+import getFileNameFromPath from "@/utilities/getFileNameFromPath";
+import { FALLBACK_VAULT_NAME } from "@renderer/global-constants";
 
 export default class VaultManager implements IVaultManager {
 	private _change$: Subject<void>;
@@ -29,6 +31,11 @@ export default class VaultManager implements IVaultManager {
 
 	get vaultFilePath(): string | null {
 		return this._vaultFilePath;
+	}
+
+	get vaultName(): string {
+		const vaultFileName = getFileNameFromPath(this._vaultFilePath);
+		return this._vaultData != null && this._vaultData.name !== "" ? this._vaultData.name : (vaultFileName ?? FALLBACK_VAULT_NAME);
 	}
 
 	async initialize(): Promise<void> {

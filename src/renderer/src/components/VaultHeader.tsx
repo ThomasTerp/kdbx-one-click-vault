@@ -5,20 +5,13 @@ import VaultDropDownMenu from "@/components/VaultDropDownMenu";
 import VaultSearch from "@/components/VaultSearch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import getFileNameFromPath from "@/utilities/getFileNameFromPath";
-import useVaultData from "@renderer/hooks/useVaultData";
 import useVaultManager from "@renderer/hooks/useVaultManager";
 import useObservableState from "@renderer/hooks/useObservableState";
-
-const DEFAULT_VAULT_NAME = "Vault";
 
 export default function VaultHeader({ className, ...props }: React.ComponentProps<"header">) {
 	const vaultManager = useVaultManager();
 	const isDirty = useObservableState(vaultManager.change$, () => vaultManager.isDirty);
-	const vaultFilePath = useObservableState(vaultManager.change$, () => vaultManager.vaultFilePath);
-	const vaultFileName = getFileNameFromPath(vaultFilePath);
-	const vaultData = useVaultData();
-	const vaultName = vaultData.name !== "" ? vaultData.name : (vaultFileName ?? DEFAULT_VAULT_NAME);
+	const vaultName = useObservableState(vaultManager.change$, () => vaultManager.vaultName);
 	return (
 		<header className={cn("grid grid-cols-[auto_auto_1fr_auto] items-center gap-2 border-b p-2", className)} {...props}>
 			<VaultDropDownMenu />

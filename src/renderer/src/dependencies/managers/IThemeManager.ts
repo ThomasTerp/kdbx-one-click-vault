@@ -8,5 +8,6 @@ export default interface IThemeManager {
 	readonly isDark: boolean;
 
 	initialize(): Promise<void>;
+
 	setTheme(theme: Theme): Promise<void>;
 }
