@@ -101,8 +101,8 @@ export default function UnlockVault({ className, ...props }: React.ComponentProp
 	// #endregion
 
 	return (
-		<div className={cn("flex items-center justify-center p-4", className)} {...props}>
-			<Card className={cn("w-full min-w-3xs max-w-sm", shakeClassName)} onAnimationEnd={stopShaking}>
+		<div className={cn("flex p-4 overflow-auto", className)} {...props}>
+			<Card className={cn("w-full min-w-3xs max-w-sm m-auto", shakeClassName)} onAnimationEnd={stopShaking}>
 				<fieldset disabled={isLoadingVault} className="contents">
 					<CardHeader>
 						<CardTitle>Unlock Vault</CardTitle>

@@ -13,7 +13,7 @@ export default function VaultEntryLine({ entryData, className }: { entryData: Va
 			return (fieldDataAIndex === -1 ? fieldsOrder.length : fieldDataAIndex) - (fieldDataBIndex === -1 ? fieldsOrder.length : fieldDataBIndex);
 		});
 	return (
-		<div className={cn("flex flex-row flex-wrap gap-3 bg-card overflow-hidden rounded-xl ring-1 ring-foreground/10", className)}>
+		<div className={cn("flex flex-row flex-wrap gap-3 bg-card overflow-hidden rounded-xl ring-1 ring-foreground/10 p-1", className)}>
 			{titleField != null && titleField.field !== null && titleField.field !== "" && (
 				<div className="flex items-center px-3 py-1 text-sm font-semibold text-card-foreground">{titleField.field}</div>
 			)}
