@@ -19,27 +19,33 @@ export default function VaultEntryLines({ className, ...props }: React.Component
 		() => vaultData.entries.filter((entryData) => !entryData.groupPath.some((vaultGroupData) => vaultGroupData.uuid === vaultData.recycleBinUUID)),
 		[vaultData.entries, vaultData.recycleBinUUID]
 	);
-	const favoriteVaultEntriesData = React.useMemo(() => vaultEntriesData.filter((entryData) => entryData.tags.includes(FAVORITE_TAG)), [vaultEntriesData]);
+	const favoriteVaultEntriesData = React.useMemo(
+		() => vaultEntriesData.filter((entryData) => entryData.tags.includes(FAVORITE_TAG)).toSorted(compareVaultEntryDataByTitle),
+		[vaultEntriesData]
+	);
 	const groupWithEntries = React.useMemo(() => {
-		const groupWithEntries: {
+		const groupsWithEntries: {
 			vaultGroupDataPath: VaultGroupData[];
 			vaultEntriesData: VaultEntryData[];
 		}[] = [];
 		for (const entryData of vaultEntriesData) {
-			const existingGroupWithEntries = groupWithEntries.find(
-				(groupWithEntries2) =>
-					groupWithEntries2.vaultGroupDataPath.length === entryData.groupPath.length &&
-					groupWithEntries2.vaultGroupDataPath.every(
+			const existingGroupWithEntries = groupsWithEntries.find(
+				(groupWithEntries) =>
+					groupWithEntries.vaultGroupDataPath.length === entryData.groupPath.length &&
+					groupWithEntries.vaultGroupDataPath.every(
 						(vaultGroupDataGroup, vaultGroupDataGroupIndex) => vaultGroupDataGroup.uuid === entryData.groupPath[vaultGroupDataGroupIndex].uuid
 					)
 			);
 			if (existingGroupWithEntries) {
 				existingGroupWithEntries.vaultEntriesData.push(entryData);
 			} else {
-				groupWithEntries.push({ vaultGroupDataPath: entryData.groupPath, vaultEntriesData: [entryData] });
+				groupsWithEntries.push({ vaultGroupDataPath: entryData.groupPath, vaultEntriesData: [entryData] });
 			}
 		}
-		return groupWithEntries;
+		for (const groupWithEntries of groupsWithEntries) {
+			groupWithEntries.vaultEntriesData = groupWithEntries.vaultEntriesData.toSorted(compareVaultEntryDataByTitle);
+		}
+		return groupsWithEntries;
 	}, [vaultEntriesData]);
 	return (
 		<div className={cn("flex flex-col gap-4", className)} {...props}>
@@ -59,4 +65,15 @@ export default function VaultEntryLines({ className, ...props }: React.Component
 			))}
 		</div>
 	);
+}
+
+function compareVaultEntryDataByTitle(entryDataA: VaultEntryData, entryDataB: VaultEntryData): number {
+	const titleA = getVaultEntryDataTitle(entryDataA);
+	const titleB = getVaultEntryDataTitle(entryDataB);
+	return titleA === "" && titleB === "" ? 0 : titleA === "" ? 1 : titleB === "" ? -1 : titleA.localeCompare(titleB);
+}
+
+function getVaultEntryDataTitle(entryData: VaultEntryData): string {
+	const titleField = entryData.fields.find((fieldData) => fieldData.name === "Title");
+	return titleField?.field ?? "";
 }
