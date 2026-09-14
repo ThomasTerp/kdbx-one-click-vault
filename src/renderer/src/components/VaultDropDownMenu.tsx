@@ -15,27 +15,20 @@ import {
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle
-} from "@/components/ui/alert-dialog";
 import useThemeManager from "@renderer/hooks/useThemeManager";
 import useVaultManager from "@renderer/hooks/useVaultManager";
 import useObservableState from "@renderer/hooks/useObservableState";
 import { Theme } from "@renderer/dependencies/managers/IThemeManager";
 import { toast } from "@/components/ui/toast";
+import VaultSettingsDialog from "./VaultSettingsDialog";
+import SaveAlertDialog from "./SaveAlertDialog";
 
 export default function VaultDropDownMenu() {
 	const themeManager = useThemeManager();
 	const vaultManager = useVaultManager();
 	const theme = useObservableState(themeManager.change$, () => themeManager.theme);
-	const [isLockDialogOpen, setIsLockDialogOpen] = useState(false);
+	const [isSaveAlertOpen, setIsSaveAlertOpen] = useState(false);
+	const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
 
 	// #region Events
 	const onSaveClick = async () => {
@@ -56,7 +49,7 @@ export default function VaultDropDownMenu() {
 		try {
 			const canClose = await vaultManager.closeVault();
 			if (!canClose) {
-				setIsLockDialogOpen(true);
+				setIsSaveAlertOpen(true);
 			}
 		} catch {
 			toast.add({ type: "error", description: "Failed to lock vault." });
@@ -72,6 +65,8 @@ export default function VaultDropDownMenu() {
 			}
 		} catch {
 			toast.add({ type: "error", description: "Failed to save vault." });
+		} finally {
+			setIsSaveAlertOpen(false);
 		}
 	};
 	const onDiscardAndLockClick = async () => {
@@ -79,6 +74,8 @@ export default function VaultDropDownMenu() {
 			await vaultManager.closeVault(true);
 		} catch {
 			toast.add({ type: "error", description: "Failed to lock vault." });
+		} finally {
+			setIsSaveAlertOpen(false);
 		}
 	};
 	// #endregion
@@ -136,7 +133,7 @@ export default function VaultDropDownMenu() {
 					</DropdownMenuGroup>
 					<DropdownMenuSeparator />
 					<DropdownMenuGroup>
-						<DropdownMenuItem>
+						<DropdownMenuItem onClick={() => setIsSettingsDialogOpen(true)}>
 							<Settings2 />
 							Vault Settings
 						</DropdownMenuItem>
@@ -155,21 +152,15 @@ export default function VaultDropDownMenu() {
 					</DropdownMenuGroup>
 				</DropdownMenuContent>
 			</DropdownMenu>
-			<AlertDialog open={isLockDialogOpen} onOpenChange={setIsLockDialogOpen}>
-				<AlertDialogContent>
-					<AlertDialogHeader>
-						<AlertDialogTitle>Lock Vault</AlertDialogTitle>
-						<AlertDialogDescription>The vault has unsaved changes. Do you want to save before locking?</AlertDialogDescription>
-					</AlertDialogHeader>
-					<AlertDialogFooter>
-						<AlertDialogAction className="mr-auto" variant="destructive" onClick={() => void onDiscardAndLockClick()}>
-							Discard Changes
-						</AlertDialogAction>
-						<AlertDialogAction onClick={() => void onSaveAndLockClick()}>Save</AlertDialogAction>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
-					</AlertDialogFooter>
-				</AlertDialogContent>
-			</AlertDialog>
+			<VaultSettingsDialog open={isSettingsDialogOpen} onOpenChange={setIsSettingsDialogOpen} />
+			<SaveAlertDialog
+				open={isSaveAlertOpen}
+				onOpenChange={setIsSaveAlertOpen}
+				title="Lock Vault"
+				description="The vault has unsaved changes. Do you want to save before locking?"
+				onDiscard={() => void onDiscardAndLockClick()}
+				onSave={() => void onSaveAndLockClick()}
+			/>
 		</>
 	);
 }
